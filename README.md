@@ -7,6 +7,8 @@ Resources: https://blogs.fau.de/hager/archives/8263, https://www.cs.virginia.edu
 
 Getting a realistic **estimate** of the achievable **memory bandwidth**.
 
+**Important note:** For now this package only implements a very simple version of the original STREAM benchmark. If time permits, I will improve the benchmark in the future.
+
 ## Usage
 
 The function `measure_memory_bandwidth()` performs a STREAM benchmark and estimates the memory bandwidth in megabytes per second (MB/s). It returns a 3-tuple indicating the median, minimum,
