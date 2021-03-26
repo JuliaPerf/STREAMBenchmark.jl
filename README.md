@@ -15,7 +15,7 @@ The function `measure_memory_bandwidth()` performs a STREAM benchmark and estima
 ```julia
 julia> using STREAMBenchmark
 
-julia> measure_memory_bandwidth()
+julia> measure_memory_bandwidth() # median, minimum, maximum in MB/s
 (29275.8, 28330.6, 31153.1)
 
 julia> measure_memory_bandwidth(verbose=true)
