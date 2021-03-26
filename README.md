@@ -3,11 +3,9 @@
 [![Build Status](https://github.com/crstnbr/STREAMBenchmark.jl/workflows/CI/badge.svg)](https://github.com/crstnbr/STREAMBenchmark.jl/actions)
 [![Coverage](https://codecov.io/gh/crstnbr/STREAMBenchmark.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/crstnbr/STREAMBenchmark.jl)
 
-Resources: https://blogs.fau.de/hager/archives/8263, https://www.cs.virginia.edu/stream/
-
 Getting a realistic **estimate** of the achievable **memory bandwidth**.
 
-**Important note:** For now this package only implements a very simple version of the original STREAM benchmark. If time permits, I will improve the benchmark in the future.
+**Important note:** For now this package only implements a very simple version of the [original STREAM benchmark](https://www.cs.virginia.edu/stream/). If time permits, I will improve the benchmark in the future.
 
 ## Usage
 
@@ -27,3 +25,8 @@ ADD:   28878.3 MB/s
 TRIAD: 29361.9 MB/s
 (29601.6, 28878.3, 31120.8)
 ```
+
+## Resources
+
+* https://blogs.fau.de/hager/archives/8263
+* https://www.cs.virginia.edu/stream/
