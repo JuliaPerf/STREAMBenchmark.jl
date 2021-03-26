@@ -3,13 +3,13 @@
 [![Build Status](https://github.com/crstnbr/STREAMBenchmark.jl/workflows/CI/badge.svg)](https://github.com/crstnbr/STREAMBenchmark.jl/actions)
 [![Coverage](https://codecov.io/gh/crstnbr/STREAMBenchmark.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/crstnbr/STREAMBenchmark.jl)
 
-Getting a realistic **estimate** of the achievable **memory bandwidth**.
+Getting a realistic **estimate** of the achievable (maximal) **memory bandwidth**.
 
 **Note** This package implements a simple variant of the [original STREAM benchmark](https://www.cs.virginia.edu/stream/).
 
 ## Usage
 
-The function `memory_bandwidth()` estimates the (maximal) memory bandwidth in megabytes per second (MB/s). It returns a 3-tuple indicating the median, minimum, and maximum of individual measurements.
+The function `memory_bandwidth()` estimates the memory bandwidth in megabytes per second (MB/s). It returns a 3-tuple indicating the median, minimum, and maximum of individual measurements.
 
 ```julia
 julia> using STREAMBenchmark
