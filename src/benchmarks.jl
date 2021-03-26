@@ -10,28 +10,31 @@ default_vector_length() = 4 * last(cachesize())
 Measure the memory bandwidth in megabytes per second (MB/s). Returns a 3-tuple
 indicating the median, minimum, and maximum of the measurements in this order.
 """
-function memory_bandwidth(; verbose=false, N=default_vector_length(), evals_per_sample=10)
+function memory_bandwidth(; verbose=false, N=default_vector_length(), evals_per_sample=10, write_allocate=true)
 	# initialize
 	A, B, C, D, s = zeros(N), zeros(N), zeros(N), zeros(N), rand();
 
+	α = write_allocate ? 24 : 16
+	β = write_allocate ? 32 : 24
+
 	# COPY
 	t_copy = @belapsed copy($C, $A) samples=10 evals=evals_per_sample
-	membw_copy = N*24*1e-6/t_copy
+	membw_copy = N * α * 1e-6 / t_copy
 	verbose && println("COPY:  ", round(membw_copy, digits=1), " MB/s")
 
 	# SCALE
 	t_scale = @belapsed scale($B, $C, $s) samples=10 evals=evals_per_sample
-	membw_scale = N*24*1e-6/t_scale
+	membw_scale = N * α * 1e-6 / t_scale
 	verbose && println("SCALE: ", round(membw_scale, digits=1), " MB/s")
 
 	# ADD
 	t_add = @belapsed add($C, $A, $B) samples=10 evals=evals_per_sample
-	membw_add = N*32*1e-6/t_add
+	membw_add = N * β * 1e-6 / t_add
 	verbose && println("ADD:   ", round(membw_add, digits=1), " MB/s")
 
 	# TRIAD
 	t_triad = @belapsed triad($A, $B, $C, $s) samples=10 evals=evals_per_sample
-	membw_triad = N*32*1e-6/t_triad
+	membw_triad = N * β * 1e-6 / t_triad
 	verbose && println("TRIAD: ", round(membw_triad, digits=1), " MB/s")
 
 	# statistics
