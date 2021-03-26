@@ -6,6 +6,6 @@ using Statistics
 include("kernels.jl")
 include("benchmarks.jl")
 
-export measure_memory_bandwidth
+export memory_bandwidth
 
 end

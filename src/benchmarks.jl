@@ -1,17 +1,16 @@
 """
-Rule of thumb "laid down by Dr. Bandwidth" for choosing the default vector length.
+Four times the size of the outermost cache (rule of thumb "laid down by Dr. Bandwidth").
 """
-default_vector_length() = 2 * Int(4 * last(cachesize()) / (6*8))
+default_vector_length() = 4 * last(cachesize())
 
 
 """
+	memory_bandwidth(; verbose=false, N=default_vector_length(), evals_per_sample=10)
 
-	measure_memory_bandwidth(; verbose=false, reducer=median, N=default_vector_length())
-
-Measures / estimates the memory bandwidth in megabytes per second (MB/s). Returns a 3-tuple
+Measure the memory bandwidth in megabytes per second (MB/s). Returns a 3-tuple
 indicating the median, minimum, and maximum of the measurements in this order.
 """
-function measure_memory_bandwidth(; verbose=false, reducer=median, N=default_vector_length(), evals_per_sample=10)
+function memory_bandwidth(; verbose=false, N=default_vector_length(), evals_per_sample=10)
 	# initialize
 	A, B, C, D, s = zeros(N), zeros(N), zeros(N), zeros(N), rand();
 
@@ -38,5 +37,33 @@ function measure_memory_bandwidth(; verbose=false, reducer=median, N=default_vec
 	# statistics
 	values = [membw_copy, membw_scale, membw_add, membw_triad]
 	
-	return round.((reducer(values), minimum(values), maximum(values)), digits=1)
+	return round.((median(values), minimum(values), maximum(values)), digits=1)
 end
+
+
+"""
+	vector_length_dependence(; n=4, evals_per_sample=5) -> Dict
+
+Measure the memory bandwidth for multiple vector lengths corresponding to
+factors of the size of the outermost cache.
+"""
+function vector_length_dependence(; n=4, evals_per_sample=5)
+	outer_cache_size = CpuId.cachesize()[end]
+	Ns = floor.(Int, range(1,4,length=n) .* outer_cache_size)
+	membws = Dict{Int, Float64}()
+	for (i, N) in pairs(Ns)
+		m, _, _ = memory_bandwidth(N=N, evals_per_sample=evals_per_sample)
+		membws[N] = m
+		println(i,": ", N => m)
+	end
+	return membws
+end
+
+
+
+
+
+
+
+
+
