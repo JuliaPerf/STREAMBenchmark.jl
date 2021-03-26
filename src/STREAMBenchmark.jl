@@ -1,5 +1,5 @@
 module STREAMBenchmark
 
-# Write your package code here.
+include("kernels.jl")
 
 end
