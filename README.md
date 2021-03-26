@@ -6,3 +6,22 @@
 Resources: https://blogs.fau.de/hager/archives/8263, https://www.cs.virginia.edu/stream/
 
 Getting a **realistic estimate** of the achievable (maximal) **memory bandwidth**.
+
+## Usage
+
+The function `measure_memory_bandwidth()` performs a STREAM benchmark and estimates the memory bandwidth in megabytes per second (MB/s). It returns a 3-tuple indicating the median, minimum,
+  and maximum of the measurements in this order.
+
+```julia
+julia> using STREAMBenchmark
+
+julia> measure_memory_bandwidth()
+(29275.8, 28330.6, 31153.1)
+
+julia> measure_memory_bandwidth(verbose=true)
+COPY:  29841.3 MB/s
+SCALE: 31120.8 MB/s
+ADD:   28878.3 MB/s
+TRIAD: 29361.9 MB/s
+(29601.6, 28878.3, 31120.8)
+```
