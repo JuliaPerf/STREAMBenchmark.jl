@@ -9,7 +9,7 @@ Getting a realistic **estimate** of the achievable **memory bandwidth**.
 
 ## Usage
 
-The function `memory_bandwidth()` estimates the memory bandwidth in megabytes per second (MB/s). It returns a 3-tuple indicating the median, minimum, and maximum of the measurements in this order.
+The function `memory_bandwidth()` estimates the (maximal) memory bandwidth in megabytes per second (MB/s). It returns a 3-tuple indicating the median, minimum, and maximum of individual measurements.
 
 ```julia
 julia> using STREAMBenchmark
