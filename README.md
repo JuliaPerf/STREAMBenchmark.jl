@@ -5,7 +5,7 @@
 
 Resources: https://blogs.fau.de/hager/archives/8263, https://www.cs.virginia.edu/stream/
 
-Getting a **realistic estimate** of the achievable (maximal) **memory bandwidth**.
+Getting a realistic **estimate** of the achievable **memory bandwidth**.
 
 ## Usage
 
