@@ -5,12 +5,12 @@ default_vector_length() = 4 * last(cachesize())
 
 
 """
-	memory_bandwidth(; verbose=false, N=default_vector_length(), evals_per_sample=10)
+	memory_bandwidth(; verbose=false, N=default_vector_length(), evals_per_sample=1)
 
 Measure the memory bandwidth in megabytes per second (MB/s). Returns a 3-tuple
 indicating the median, minimum, and maximum of the measurements in this order.
 """
-function memory_bandwidth(; verbose=false, N=default_vector_length(), evals_per_sample=10, write_allocate=true)
+function memory_bandwidth(; verbose=false, N=default_vector_length(), evals_per_sample=1, write_allocate=true)
 	# initialize
 	A, B, C, D, s = zeros(N), zeros(N), zeros(N), zeros(N), rand();
 
@@ -45,12 +45,12 @@ end
 
 
 """
-	vector_length_dependence(; n=4, evals_per_sample=5) -> Dict
+	vector_length_dependence(; n=4, evals_per_sample=1) -> Dict
 
 Measure the memory bandwidth for multiple vector lengths corresponding to
 factors of the size of the outermost cache.
 """
-function vector_length_dependence(; n=4, evals_per_sample=5)
+function vector_length_dependence(; n=4, evals_per_sample=1)
 	outer_cache_size = CpuId.cachesize()[end]
 	Ns = floor.(Int, range(1,4,length=n) .* outer_cache_size)
 	membws = Dict{Int, Float64}()
