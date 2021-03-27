@@ -27,7 +27,7 @@ TRIAD: 29361.9 MB/s
 
 ### Multithreading
 
-If you start Julia with multiple threads (e.g. `julia -t 4`) the benchmark will be run in parallel (see `STREAMBenchmark.multithreading()`). To disable multithreading you can redefine `STREAMBenchmark.multithreading() = false`.
+If you start Julia with multiple threads (e.g. `julia -t 4`) the kernel loops will be run in parallel (see `STREAMBenchmark.multithreading()`). To disable multithreading you can redefine `STREAMBenchmark.multithreading() = false`.
 
 ### Vector length
 
