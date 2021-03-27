@@ -71,6 +71,10 @@ julia> benchmark()
 (single = (median = 25216.6, minimum = 24526.7, maximum = 25557.0), multi = (median = 25474.8, minimum = 24863.8, maximum = 25651.4))
 ```
 
+#### LoopVectorization
+
+You can make STREAMBenchmarks.jl use [LoopVectorization](https://github.com/JuliaSIMD/LoopVectorization.jl)'s `@avxt` instead of `@threads` by setting `STREAMBenchmark.avxt() = true`.
+
 ### Thread pinning
 
 It is probably a good idea to start julia with `JULIA_EXLUSIVE=1 julia`, i.e. to set the environmental variable `JULIA_EXCLUSIVE = 1`. This should pin the used threads to the first `1:nthreads()` cores.
