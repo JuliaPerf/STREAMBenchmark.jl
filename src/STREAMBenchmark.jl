@@ -8,6 +8,6 @@ using LoopVectorization
 include("kernels.jl")
 include("benchmarks.jl")
 
-export memory_bandwidth
+export memory_bandwidth, benchmark
 
 end

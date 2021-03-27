@@ -4,43 +4,94 @@ Four times the size of the outermost cache (rule of thumb "laid down by Dr. Band
 default_vector_length() = 4 * last(cachesize())
 
 
-"""
-	memory_bandwidth(; verbose=false, N=default_vector_length(), evals_per_sample=1)
-
-Measure the memory bandwidth in megabytes per second (MB/s). Returns a 3-tuple
-indicating the median, minimum, and maximum of the measurements in this order.
-"""
-function memory_bandwidth(; verbose=false, N=default_vector_length(), evals_per_sample=1, write_allocate=true)
+function _run_kernels(copy, scale, add, triad;
+					  verbose=true,
+					  N=default_vector_length(),
+					  evals_per_sample=1,
+					  write_allocate=true)
 	# initialize
 	A, B, C, D, s = zeros(N), zeros(N), zeros(N), zeros(N), rand();
 
 	α = write_allocate ? 24 : 16
 	β = write_allocate ? 32 : 24
 
+	f = t -> N * α * 1e-6 / t
+	g = t -> N * β * 1e-6 / t
+
 	# COPY
 	t_copy = @belapsed copy($C, $A) samples=10 evals=evals_per_sample
-	membw_copy = N * α * 1e-6 / t_copy
-	verbose && println("COPY:  ", round(membw_copy, digits=1), " MB/s")
+	bw_copy = f(t_copy)
+	verbose && println("╟─ COPY:  ", round(bw_copy, digits=1), " MB/s")
 
 	# SCALE
 	t_scale = @belapsed scale($B, $C, $s) samples=10 evals=evals_per_sample
-	membw_scale = N * α * 1e-6 / t_scale
-	verbose && println("SCALE: ", round(membw_scale, digits=1), " MB/s")
+	bw_scale = f(t_scale)
+	verbose && println("╟─ SCALE: ", round(bw_scale, digits=1), " MB/s")
 
 	# ADD
 	t_add = @belapsed add($C, $A, $B) samples=10 evals=evals_per_sample
-	membw_add = N * β * 1e-6 / t_add
-	verbose && println("ADD:   ", round(membw_add, digits=1), " MB/s")
+	bw_add = g(t_add)
+	verbose && println("╟─ ADD:   ", round(bw_add, digits=1), " MB/s")
 
 	# TRIAD
 	t_triad = @belapsed triad($A, $B, $C, $s) samples=10 evals=evals_per_sample
-	membw_triad = N * β * 1e-6 / t_triad
-	verbose && println("TRIAD: ", round(membw_triad, digits=1), " MB/s")
+	bw_triad = g(t_triad)
+	verbose && println("╟─ TRIAD: ", round(bw_triad, digits=1), " MB/s")
 
 	# statistics
-	values = [membw_copy, membw_scale, membw_add, membw_triad]
-	
-	return round.((median(values), minimum(values), maximum(values)), digits=1)
+	values = [bw_copy, bw_scale, bw_add, bw_triad]
+	calc = f->round(f(values), digits=1)
+
+	return (median=calc(median), minimum=calc(minimum), maximum=calc(maximum))
+end
+
+
+"""
+	benchmark(; kwargs...)
+
+Runs a comprehensive STREAM benchmark. Returns the median, minimum, and maximum
+of single- and multi-threaded measurements of the memory_bandwidth (in MB/s).
+"""
+function benchmark(; kwargs...)
+	println("╔══╡ Single-threaded:")
+	nt_single = _run_kernels(copy, scale, add, triad; kwargs...)
+	println("╟─────────────────────")
+	println("║ Median: ", nt_single.median, " MB/s")
+	println("╚═════════════════════")
+	println()
+	println("╔══╡ Multi-threaded:")
+	nt_multi = _run_kernels(copy_threaded, scale_threaded, add_threaded, triad_threaded; kwargs...)
+	println("╟─────────────────────")
+	println("║ Median: ", nt_multi.median, " MB/s")
+	println("╚═════════════════════")
+	println()
+	return (single=nt_single, multi=nt_multi)
+end
+
+
+"""
+	memory_bandwidth(; verbose=false, multithreading=nthreads() > 1, kwargs...)
+
+Measure the memory bandwidth in megabytes per second (MB/s). Returns a named tuple
+indicating the median, minimum, and maximum of the measurements in this order.
+"""
+function memory_bandwidth(; verbose=false,
+							multithreading=nthreads() > 1,
+							kwargs...)
+	c = multithreading ? copy_threaded : copy
+	s = multithreading ? scale_threaded : scale
+	a = multithreading ? add_threaded : add
+	t = multithreading ? triad_threaded : triad
+	if verbose
+		multithreading ? println("╔══╡ Multi-threaded:") : println("╔══╡ Single-threaded:")
+	end
+	nt = _run_kernels(c, s, a, t; verbose, kwargs...)
+	if verbose
+		println("╟─────────────────────")
+		println("║ Median: ", nt.median, " MB/s")
+		println("╚═════════════════════")
+	end
+	return nt
 end
 
 
@@ -61,12 +112,3 @@ function vector_length_dependence(; n=4, evals_per_sample=1)
 	end
 	return membws
 end
-
-
-
-
-
-
-
-
-
