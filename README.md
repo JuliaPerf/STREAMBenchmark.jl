@@ -15,19 +15,61 @@ The function `memory_bandwidth()` estimates the memory bandwidth in megabytes pe
 julia> using STREAMBenchmark
 
 julia> memory_bandwidth()
-COPY:  25267.8 MB/s
-SCALE: 25491.2 MB/s
-ADD:   25440.6 MB/s
-TRIAD: 24401.0 MB/s
-(median = 25354.2, minimum = 24401.0, maximum = 25491.2)
+(median = 25723.2, minimum = 25211.5, maximum = 26227.8)
 
-julia> memory_bandwidth(verbose=false)
-(median = 24526.1, minimum = 23562.6, maximum = 25191.3)
+julia> memory_bandwidth(verbose=true)
+╔══╡ Multi-threaded:
+╟─ COPY:  24772.0 MB/s
+╟─ SCALE: 25918.4 MB/s
+╟─ ADD:   24352.9 MB/s
+╟─ TRIAD: 25025.8 MB/s
+╟─────────────────────
+║ Median: 24898.9 MB/s
+╚═════════════════════
+(median = 24898.9, minimum = 24352.9, maximum = 25918.4)
 ```
 
 ### Multithreading
 
-If you start Julia with multiple threads (e.g. `julia -t 4`) the kernel loops will be run in parallel (see `STREAMBenchmark.multithreading()`). To disable multithreading you can redefine `STREAMBenchmark.multithreading() = false`.
+If you start Julia with multiple threads (e.g. `julia -t 4`) and call `memory_bandwidth` the kernel loops will be run in parallel. To disable multithreading you can set the keyword argument `multithreading=false`:
+
+```julia
+julia> memory_bandwidth(verbose=true, multithreading=false)
+╔══╡ Single-threaded:
+╟─ COPY:  24153.9 MB/s
+╟─ SCALE: 24478.1 MB/s
+╟─ ADD:   25298.8 MB/s
+╟─ TRIAD: 24595.5 MB/s
+╟─────────────────────
+║ Median: 24536.8 MB/s
+╚═════════════════════
+(median = 24536.8, minimum = 24153.9, maximum = 25298.8)
+```
+
+If you want to run both the single- and multi-threaded benchmark at once you can call `benchmark()`:
+
+```julia
+julia> benchmark()
+╔══╡ Single-threaded:
+╟─ COPY:  25533.0 MB/s
+╟─ SCALE: 25557.0 MB/s
+╟─ ADD:   24526.7 MB/s
+╟─ TRIAD: 24900.2 MB/s
+╟─────────────────────
+║ Median: 25216.6 MB/s
+╚═════════════════════
+
+╔══╡ Multi-threaded:
+╟─ COPY:  25651.4 MB/s
+╟─ SCALE: 25454.5 MB/s
+╟─ ADD:   25495.2 MB/s
+╟─ TRIAD: 24863.8 MB/s
+╟─────────────────────
+║ Median: 25474.8 MB/s
+╚═════════════════════
+
+(single = (median = 25216.6, minimum = 24526.7, maximum = 25557.0), multi = (median = 25474.8, minimum = 24863.8, maximum = 25651.4))
+```
 
 ### Thread pinning
 
