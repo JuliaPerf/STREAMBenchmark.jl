@@ -29,6 +29,10 @@ TRIAD: 29361.9 MB/s
 
 If you start Julia with multiple threads (e.g. `julia -t 4`) the benchmark will be run in parallel (see `STREAMBenchmark.multithreading()`). To disable multithreading you can redefine `STREAMBenchmark.multithreading() = false`.
 
+### Thread pinning
+
+It is probably a good idea to start julia with `JULIA_EXLUSIVE=1 julia`, i.e. to set the environmental variable `JULIA_EXCLUSIVE = 1`. This should pin the used threads to the first `1:nthreads()` cores.
+
 ### Vector length
 
 By default a vector length of four times the size of the outermost cache is used. To measure the memory bandwidth for a few other factorsas well you might want to use `STREAMBenchmark.vector_length_dependence()`:
