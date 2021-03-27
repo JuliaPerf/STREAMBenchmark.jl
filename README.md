@@ -9,20 +9,20 @@ Getting a realistic **estimate** of the achievable (maximal) **memory bandwidth*
 
 ## Usage
 
-The function `memory_bandwidth()` estimates the memory bandwidth in megabytes per second (MB/s). It returns a 3-tuple indicating the median, minimum, and maximum of individual measurements.
+The function `memory_bandwidth()` estimates the memory bandwidth in megabytes per second (MB/s). It returns a named tuple indicating the median, minimum, and maximum of the four measurements.
 
 ```julia
 julia> using STREAMBenchmark
 
-julia> memory_bandwidth() # median, minimum, maximum in MB/s
-(29275.8, 28330.6, 31153.1)
+julia> memory_bandwidth()
+COPY:  25267.8 MB/s
+SCALE: 25491.2 MB/s
+ADD:   25440.6 MB/s
+TRIAD: 24401.0 MB/s
+(median = 25354.2, minimum = 24401.0, maximum = 25491.2)
 
-julia> memory_bandwidth(verbose=true)
-COPY:  29841.3 MB/s
-SCALE: 31120.8 MB/s
-ADD:   28878.3 MB/s
-TRIAD: 29361.9 MB/s
-(29601.6, 28878.3, 31120.8)
+julia> memory_bandwidth(verbose=false)
+(median = 24526.1, minimum = 23562.6, maximum = 25191.3)
 ```
 
 ### Multithreading
