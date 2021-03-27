@@ -3,13 +3,13 @@
 [![Build Status](https://github.com/crstnbr/STREAMBenchmark.jl/workflows/CI/badge.svg)](https://github.com/crstnbr/STREAMBenchmark.jl/actions)
 [![Coverage](https://codecov.io/gh/crstnbr/STREAMBenchmark.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/crstnbr/STREAMBenchmark.jl)
 
-Getting a realistic **estimate** of the achievable **memory bandwidth**.
+Getting a realistic **estimate** of the achievable (maximal) **memory bandwidth**.
 
 **Note** This package implements a simple variant of the [original STREAM benchmark](https://www.cs.virginia.edu/stream/).
 
 ## Usage
 
-The function `memory_bandwidth()` estimates the memory bandwidth in megabytes per second (MB/s). It returns a 3-tuple indicating the median, minimum, and maximum of the measurements in this order.
+The function `memory_bandwidth()` estimates the memory bandwidth in megabytes per second (MB/s). It returns a 3-tuple indicating the median, minimum, and maximum of individual measurements.
 
 ```julia
 julia> using STREAMBenchmark
@@ -27,7 +27,7 @@ TRIAD: 29361.9 MB/s
 
 ### Multithreading
 
-If you start Julia with multiple threads (e.g. `julia -t 4`) the benchmark will be run in parallel (see `STREAMBenchmark.multithreading()`). To disable multithreading you can redefine `STREAMBenchmark.multithreading() = false`.
+If you start Julia with multiple threads (e.g. `julia -t 4`) the kernel loops will be run in parallel (see `STREAMBenchmark.multithreading()`). To disable multithreading you can redefine `STREAMBenchmark.multithreading() = false`.
 
 ### Thread pinning
 
