@@ -10,7 +10,7 @@ macro maybethreads(code)
         @inbounds @threads($code)
     end
    else
-    $code
+    @inbounds $code
    end))
 end
 
