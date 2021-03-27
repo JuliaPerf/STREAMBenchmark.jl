@@ -20,7 +20,7 @@ function compile_original_STREAM(; compiler=:clang, multithreading=false)
 	println("- Trying to compile \"stream.c\" using $(string(compiler))")
 	if compiler == :clang
 		options = ["-Ofast", "-march=native", "-DSTREAM_ARRAY_SIZE=$(default_vector_length())"] # "-DNTIMES=30"
-	elseif compiler == :gcc-10 || compiler == :gcc
+	elseif compiler == :(gcc-10) || compiler == :gcc
 		options = ["-O3", "-DSTREAM_ARRAY_SIZE=$(default_vector_length())"]
 	else
 		error("Unknown compiler option: $compiler.")
