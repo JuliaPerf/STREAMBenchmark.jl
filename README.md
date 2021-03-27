@@ -35,7 +35,7 @@ It is probably a good idea to start julia with `JULIA_EXLUSIVE=1 julia`, i.e. to
 
 ### Vector length
 
-By default a vector length of four times the size of the outermost cache is used. To measure the memory bandwidth for a few other factorsas well you might want to use `STREAMBenchmark.vector_length_dependence()`:
+By default a vector length of four times the size of the outermost cache is used (a rule of thumb ["laid down by Dr. Bandwidth"](https://blogs.fau.de/hager/archives/8263)). To measure the memory bandwidth for a few other factorsas well you might want to use `STREAMBenchmark.vector_length_dependence()`:
 
 ```julia
 julia> STREAMBenchmark.vector_length_dependence();
