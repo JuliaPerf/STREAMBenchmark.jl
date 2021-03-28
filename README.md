@@ -29,22 +29,11 @@ julia> memory_bandwidth(verbose=true)
 (median = 24898.9, minimum = 24352.9, maximum = 25918.4)
 ```
 
+Note that we count / assume write-allocates by default (you can use `write_allocate=false` to disregard them).
+
 ### Multithreading
 
-If you start Julia with multiple threads (e.g. `julia -t 4`) and call `memory_bandwidth` the kernel loops will be run in parallel. To disable multithreading you can set the keyword argument `multithreading=false`:
-
-```julia
-julia> memory_bandwidth(verbose=true, multithreading=false)
-╔══╡ Single-threaded:
-╟─ COPY:  24153.9 MB/s
-╟─ SCALE: 24478.1 MB/s
-╟─ ADD:   25298.8 MB/s
-╟─ TRIAD: 24595.5 MB/s
-╟─────────────────────
-║ Median: 24536.8 MB/s
-╚═════════════════════
-(median = 24536.8, minimum = 24153.9, maximum = 25298.8)
-```
+If you start Julia with multiple threads (e.g. `julia -t 4`) and call `memory_bandwidth` the kernel loops will be run in parallel. To disable multithreading you can set the keyword argument `multithreading=false`.
 
 If you want to run both the single- and multi-threaded benchmark at once you can call `benchmark()`:
 
@@ -91,7 +80,78 @@ julia> STREAMBenchmark.vector_length_dependence();
 4: 50331648 => 23921.2
 ```
 
+## Comparison with original STREAM benchmark
+
+We can download and compile the [C source code](https://www.cs.virginia.edu/stream/FTP/Code/) of the original STREAM benchmark via STREAMBenchmark.jl:
+
+```julia
+julia> using STREAMBenchmark
+
+julia> STREAMBenchmark.download_original_STREAM()
+- Creating folder "stream"
+- Downloading C STREAM benchmark
+- Done.
+
+julia> STREAMBenchmark.compile_original_STREAM(compiler=:gcc, multithreading=false)
+- Trying to compile "stream.c" using gcc
+  Using options: -O3 -DSTREAM_ARRAY_SIZE=33554432
+- Done.
+
+julia> STREAMBenchmark.execute_original_STREAM()
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 33554432 (elements), Offset = 0 (elements)
+Memory per array = 256.0 MiB (= 0.2 GiB).
+Total memory required = 768.0 MiB (= 0.8 GiB).
+Each kernel will be executed 10 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 31889 microseconds.
+   (= 31889 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:           10745.4     0.049993     0.049963     0.050080
+Scale:          10774.3     0.049869     0.049829     0.049904
+Add:            11538.8     0.069876     0.069791     0.070274
+Triad:          11429.4     0.070508     0.070459     0.070640
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------
+
+julia> benchmark(write_allocate=false) # the original benchmark doesn't count / assumes the absence of write-allocates
+╔══╡ Single-threaded:
+╟─ COPY:  10699.4 MB/s
+╟─ SCALE: 10542.2 MB/s
+╟─ ADD:   11088.3 MB/s
+╟─ TRIAD: 11099.2 MB/s
+╟─────────────────────
+║ Median: 10893.9 MB/s
+╚═════════════════════
+
+╔══╡ Multi-threaded:
+╟─ COPY:  10625.1 MB/s
+╟─ SCALE: 10226.7 MB/s
+╟─ ADD:   11052.4 MB/s
+╟─ TRIAD: 10902.9 MB/s
+╟─────────────────────
+║ Median: 10764.0 MB/s
+╚═════════════════════
+
+(single = (median = 10893.9, minimum = 10542.2, maximum = 11099.2), multi = (median = 10764.0, minimum = 10226.7, maximum = 11052.4))
+```
+
 ## Resources
 
-* https://blogs.fau.de/hager/archives/8263
-* https://www.cs.virginia.edu/stream/
+* Original STREAM benchmark (C/Fortran): https://www.cs.virginia.edu/stream/
+* Blog post about how to optimize and interpret the benchmark: https://blogs.fau.de/hager/archives/8263
