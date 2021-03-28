@@ -1,6 +1,6 @@
-# -fPIC -O3 -msse3 -xc
-# icc -O3 -xCORE-AVX2 -ffreestanding -qopenmp -DSTREAM_ARRAY_SIZE=80000000 -DNTIMES=20 stream.c -o stream.omp.AVX2.80M.20x.icc
-
+"""
+Download the C STREAM benchmark source code from https://www.cs.virginia.edu/stream into a new folder "stream".
+"""
 function download_original_STREAM()
 	println("- Creating folder \"stream\"")
 	mkdir("stream")
@@ -11,6 +11,11 @@ function download_original_STREAM()
 	return nothing
 end
 
+"""
+	compile_original_STREAM(; compiler=:clang, multithreading=false)
+
+Compile the source code of the C STREAM benchmark ("stream/stream.c") into a binary "stream/stream".
+"""
 function compile_original_STREAM(; compiler=:clang, multithreading=false)
 	if !isfile("stream/stream.c")
 		@warn("Couldn't find source code \"stream/stream.c\". Have you run STREAMBenchmark.download_original_STREAM()?")
@@ -34,6 +39,9 @@ function compile_original_STREAM(; compiler=:clang, multithreading=false)
 	return nothing
 end
 
+"""
+Execute the binary of the C STREAM benchmark (i.e. "stream/stream").
+"""
 function execute_original_STREAM()
 	if !isfile("stream/stream")
 		@warn("Couldn't find executable \"stream/stream\". Have you run STREAMBenchmark.compile_original_STREAM()?")
