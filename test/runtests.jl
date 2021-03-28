@@ -10,6 +10,10 @@ function with_avxt(f)
    @eval STREAMBenchmark.avxt() = false
 end
 
+@show keys(memory_bandwidth()) == (:median, :minimum, :maximum)
+@show 1000 < memory_bandwidth().median < 500_000
+@show 1000 < memory_bandwidth(multithreading=false).median < 500_000
+
 @testset "STREAMBenchmark.jl" begin
    @testset "Benchmarks" begin
       println("1")
