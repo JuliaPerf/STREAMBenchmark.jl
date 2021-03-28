@@ -3,6 +3,7 @@ Four times the size of the outermost cache (rule of thumb "laid down by Dr. Band
 """
 default_vector_length() = 4 * last(cachesize())
 
+nthreads_string() = avxt() ? "@avxt" : string(nthreads())
 
 function _run_kernels(copy, scale, add, triad;
 					  verbose=true,
@@ -60,6 +61,7 @@ function benchmark(; kwargs...)
 	println("╚═════════════════════")
 	println()
 	println("╔══╡ Multi-threaded:")
+	println("╠══╡ ($(nthreads_string()) threads)")
 	nt_multi = _run_kernels(copy_threaded, scale_threaded, add_threaded, triad_threaded; kwargs...)
 	println("╟─────────────────────")
 	println("║ Median: ", nt_multi.median, " MB/s")
@@ -84,6 +86,7 @@ function memory_bandwidth(; verbose=false,
 	t = multithreading ? triad_threaded : triad
 	if verbose
 		multithreading ? println("╔══╡ Multi-threaded:") : println("╔══╡ Single-threaded:")
+		println("╠══╡ ($(nthreads_string()) threads)")
 	end
 	nt = _run_kernels(c, s, a, t; verbose, kwargs...)
 	if verbose
