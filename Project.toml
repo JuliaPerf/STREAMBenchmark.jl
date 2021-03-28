@@ -1,6 +1,8 @@
 name = "STREAMBenchmark"
 uuid = "05e9033e-e298-417a-adae-495536c11ad4"
 authors = ["Carsten Bauer"]
+license = "MIT"
+desc = "STREAM benchmark to measure the sustainable memory bandwidth."
 version = "0.2.0"
 
 [deps]
