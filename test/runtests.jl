@@ -16,28 +16,39 @@ end
 
       # memory_bandwidth
       @test keys(memory_bandwidth()) == (:median, :minimum, :maximum)
+      GC.gc(true)
       @test 1000 < memory_bandwidth().median < 500_000
+      GC.gc(true)
       @test 1000 < memory_bandwidth(multithreading=false).median < 500_000
+      GC.gc(true)
       with_avxt() do
          @test 1000 < memory_bandwidth().median < 500_000
       end
+      GC.gc(true)
 
       # TODO: add verbose=true test
       @test memory_bandwidth().median > memory_bandwidth(write_allocate=false).median
+      GC.gc(true)
 
       # benchmark
-      nt = benchmark()
-      @test keys(nt) == (:single, :multi)
-      @test keys(nt.single) == (:median, :minimum, :maximum)
-      @test keys(nt.multi) == (:median, :minimum, :maximum)
+      let nt = benchmark()
+         @test keys(nt) == (:single, :multi)
+         @test keys(nt.single) == (:median, :minimum, :maximum)
+         @test keys(nt.multi) == (:median, :minimum, :maximum)
+      end
+      GC.gc(true)
 
       # vector_length_dependence
-      d = STREAMBenchmark.vector_length_dependence()
-      @test typeof(d) == Dict{Int64, Float64}
-      @test length(d) == 4
-      @test maximum(abs.(diff(collect(values(d))))) / median(values(d)) < 0.1
-      d = STREAMBenchmark.vector_length_dependence(n=2)
-      @test length(d) == 2
+      let d = STREAMBenchmark.vector_length_dependence()
+         @test typeof(d) == Dict{Int64, Float64}
+         @test length(d) == 4
+         @test maximum(abs.(diff(collect(values(d))))) / median(values(d)) < 0.1
+      end
+      GC.gc(true)
+      let d = STREAMBenchmark.vector_length_dependence(n=2)
+         @test length(d) == 2
+      end
+      GC.gc(true)
    end
 
    @testset "Kernels" begin
