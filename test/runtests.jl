@@ -10,7 +10,7 @@ function with_avxt(f)
    @eval STREAMBenchmark.avxt() = false
 end
 
-less_memory = get(ENV, "CI", false) && Sys.islinux()
+less_memory = parse(Bool, get(ENV, "CI", "false")) && Sys.islinux()
 
 @testset "STREAMBenchmark.jl" begin
    @testset "Benchmarks" begin
