@@ -10,29 +10,26 @@ function with_avxt(f)
    @eval STREAMBenchmark.avxt() = false
 end
 
-less_memory = parse(Bool, get(ENV, "CI", "false")) && Sys.islinux()
+use_less_memory = false
+@show use_less_memory
 
 @testset "STREAMBenchmark.jl" begin
    @testset "Benchmarks" begin
-      @test STREAMBenchmark.default_vector_length() >= 4*cachesize()[end]
-      less_memory && (STREAMBenchmark.default_vector_length() = cachesize()[end])
+      @test STREAMBenchmark.default_vector_length() >= 4*cachesize()[end] / sizeof(Float64)
+
+      use_less_memory && (STREAMBenchmark.default_vector_length() = 10)
       @show STREAMBenchmark.default_vector_length()
 
       # memory_bandwidth
       @test keys(memory_bandwidth()) == (:median, :minimum, :maximum)
-      GC.gc(true)
       @test 1000 < memory_bandwidth().median < 500_000
-      GC.gc(true)
       @test 1000 < memory_bandwidth(multithreading=false).median < 500_000
-      GC.gc(true)
       with_avxt() do
          @test 1000 < memory_bandwidth().median < 500_000
       end
-      GC.gc(true)
 
       # TODO: add verbose=true test
       @test memory_bandwidth().median > memory_bandwidth(write_allocate=false).median
-      GC.gc(true)
 
       # benchmark
       let nt = benchmark()
@@ -40,21 +37,16 @@ less_memory = parse(Bool, get(ENV, "CI", "false")) && Sys.islinux()
          @test keys(nt.single) == (:median, :minimum, :maximum)
          @test keys(nt.multi) == (:median, :minimum, :maximum)
       end
-      GC.gc(true)
 
       # vector_length_dependence
-      if !less_memory
-         let d = STREAMBenchmark.vector_length_dependence()
-            @test typeof(d) == Dict{Int64, Float64}
-            @test length(d) == 4
-            @test maximum(abs.(diff(collect(values(d))))) / median(values(d)) < 0.1
-         end
-         GC.gc(true)
+      let d = STREAMBenchmark.vector_length_dependence()
+         @test typeof(d) == Dict{Int64, Float64}
+         @test length(d) == 4
+         @test maximum(abs.(diff(collect(values(d))))) / median(values(d)) < 0.1
       end
-      let d = STREAMBenchmark.vector_length_dependence(n=1)
+      let d = STREAMBenchmark.vector_length_dependence(n=2)
          @test length(d) == 1
       end
-      GC.gc(true)
    end
 
    @testset "Kernels" begin

@@ -1,14 +1,14 @@
 """
 Four times the size of the outermost cache (rule of thumb "laid down by Dr. Bandwidth").
 """
-default_vector_length() = 4 * last(cachesize())
+default_vector_length() = Int(4 * last(cachesize()) / sizeof(Float64))
 
 _nthreads_string() = avxt() ? "@avxt" : string(nthreads())
 
 function _run_kernels(copy, scale, add, triad;
                       verbose=true,
                       N=default_vector_length(),
-                      evals_per_sample=1,
+                      evals_per_sample=5,
                       write_allocate=true)
     # initialize
     A, B, C, D, s = zeros(N), zeros(N), zeros(N), zeros(N), rand();
