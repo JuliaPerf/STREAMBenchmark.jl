@@ -105,7 +105,7 @@ Measure the memory bandwidth for multiple vector lengths corresponding to
 factors of the size of the outermost cache.
 """
 function vector_length_dependence(; n=4, evals_per_sample=1)
-    outer_cache_size = CpuId.cachesize()[end]
+    outer_cache_size = CpuId.cachesize()[end] / sizeof(Float64)
     Ns = floor.(Int, range(1,4,length=n) .* outer_cache_size)
     membws = Dict{Int, Float64}()
     for (i, N) in pairs(Ns)
