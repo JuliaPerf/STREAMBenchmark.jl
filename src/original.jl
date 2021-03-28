@@ -11,12 +11,14 @@ function download_original_STREAM()
     return nothing
 end
 
+_default_compiler() = Sys.islinux ? (:gcc) : (:clang)
+
 """
-    compile_original_STREAM(; compiler=:clang, multithreading=false)
+    compile_original_STREAM(; compiler=_default_compiler(), multithreading=false)
 
 Compile the source code of the C STREAM benchmark ("stream/stream.c") into a binary "stream/stream".
 """
-function compile_original_STREAM(; compiler=:clang, multithreading=false)
+function compile_original_STREAM(; compiler=_default_compiler(), multithreading=false)
     if !isfile("stream/stream.c")
         @warn("Couldn't find source code \"stream/stream.c\". Have you run STREAMBenchmark.download_original_STREAM()?")
         return nothing
