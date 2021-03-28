@@ -51,8 +51,8 @@ less_memory = parse(Bool, get(ENV, "CI", "false")) && Sys.islinux()
          end
          GC.gc(true)
       end
-      let d = STREAMBenchmark.vector_length_dependence(n=2)
-         @test length(d) == 2
+      let d = STREAMBenchmark.vector_length_dependence(n=1)
+         @test length(d) == 1
       end
       GC.gc(true)
    end
