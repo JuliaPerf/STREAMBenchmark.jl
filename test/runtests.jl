@@ -12,25 +12,31 @@ end
 
 @testset "STREAMBenchmark.jl" begin
    @testset "Benchmarks" begin
+      println("1")
       @test STREAMBenchmark.default_vector_length() >= 4*cachesize()[end]
 
+      println("2")
       # memory_bandwidth
       @test keys(memory_bandwidth()) == (:median, :minimum, :maximum)
       @test 1000 < memory_bandwidth().median < 500_000
       @test 1000 < memory_bandwidth(multithreading=false).median < 500_000
+      println("22")
       with_avxt() do
          @test 1000 < memory_bandwidth().median < 500_000
       end
 
+      println("3")
       # TODO: add verbose=true test
       @test memory_bandwidth().median > memory_bandwidth(write_allocate=false).median
 
+      println("4")
       # benchmark
       nt = benchmark()
       @test keys(nt) == (:single, :multi)
       @test keys(nt.single) == (:median, :minimum, :maximum)
       @test keys(nt.multi) == (:median, :minimum, :maximum)
 
+      println("5")
       # vector_length_dependence
       d = STREAMBenchmark.vector_length_dependence()
       @test typeof(d) == Dict{Int64, Float64}
@@ -46,6 +52,7 @@ end
       C = [42.0,42.0,42.0,42.0,42.0]
       s = 13
 
+      println("6")
       STREAMBenchmark.copy(C, A)
       @test C == A
       STREAMBenchmark.copy_threaded(C, A)
@@ -63,6 +70,7 @@ end
       STREAMBenchmark.triad_threaded(A,B,C,s)
       @test A ≈ B .+ s .* C
 
+      println("7")
       # @avxt threading
       with_avxt() do
          STREAMBenchmark.copy_threaded(C, A)
