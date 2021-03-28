@@ -153,5 +153,5 @@ julia> benchmark(write_allocate=false) # the original benchmark doesn't count / 
 
 ## Resources
 
-* https://blogs.fau.de/hager/archives/8263
-* https://www.cs.virginia.edu/stream/
+* Original STREAM benchmark (C/Fortran): https://www.cs.virginia.edu/stream/
+* Blog post about how to optimize and interpret the benchmark: https://blogs.fau.de/hager/archives/8263
