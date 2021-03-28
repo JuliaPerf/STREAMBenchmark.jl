@@ -10,7 +10,7 @@ function with_avxt(f)
    @eval STREAMBenchmark.avxt() = false
 end
 
-use_less_memory = false
+use_less_memory = true
 @show use_less_memory
 
 @testset "STREAMBenchmark.jl" begin
@@ -45,7 +45,7 @@ use_less_memory = false
          @test maximum(abs.(diff(collect(values(d))))) / median(values(d)) < 0.1
       end
       let d = STREAMBenchmark.vector_length_dependence(n=2)
-         @test length(d) == 1
+         @test length(d) == 2
       end
    end
 
