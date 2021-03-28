@@ -29,6 +29,8 @@ julia> memory_bandwidth(verbose=true)
 (median = 24898.9, minimum = 24352.9, maximum = 25918.4)
 ```
 
+Note that we count / assume write-allocates by default (you can use `write_allocate=false` to disregard them).
+
 ### Multithreading
 
 If you start Julia with multiple threads (e.g. `julia -t 4`) and call `memory_bandwidth` the kernel loops will be run in parallel. To disable multithreading you can set the keyword argument `multithreading=false`:
