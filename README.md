@@ -15,18 +15,19 @@ The function `memory_bandwidth()` estimates the memory bandwidth in megabytes pe
 julia> using STREAMBenchmark
 
 julia> memory_bandwidth()
-(median = 25723.2, minimum = 25211.5, maximum = 26227.8)
+(median = 26885.2, minimum = 26475.1, maximum = 27437.5)
 
 julia> memory_bandwidth(verbose=true)
 ╔══╡ Multi-threaded:
-╟─ COPY:  24772.0 MB/s
-╟─ SCALE: 25918.4 MB/s
-╟─ ADD:   24352.9 MB/s
-╟─ TRIAD: 25025.8 MB/s
+╠══╡ (6 threads)
+╟─ COPY:  26659.2 MB/s
+╟─ SCALE: 27236.0 MB/s
+╟─ ADD:   26017.5 MB/s
+╟─ TRIAD: 26719.0 MB/s
 ╟─────────────────────
-║ Median: 24898.9 MB/s
+║ Median: 26689.1 MB/s
 ╚═════════════════════
-(median = 24898.9, minimum = 24352.9, maximum = 25918.4)
+(median = 26689.1, minimum = 26017.5, maximum = 27236.0)
 ```
 
 Note that we count / assume write-allocates by default (you can use `write_allocate=false` to disregard them).
@@ -40,24 +41,25 @@ If you want to run both the single- and multi-threaded benchmark at once you can
 ```julia
 julia> benchmark()
 ╔══╡ Single-threaded:
-╟─ COPY:  25533.0 MB/s
-╟─ SCALE: 25557.0 MB/s
-╟─ ADD:   24526.7 MB/s
-╟─ TRIAD: 24900.2 MB/s
+╟─ COPY:  26572.5 MB/s
+╟─ SCALE: 26744.5 MB/s
+╟─ ADD:   26942.0 MB/s
+╟─ TRIAD: 26943.6 MB/s
 ╟─────────────────────
-║ Median: 25216.6 MB/s
+║ Median: 26843.2 MB/s
 ╚═════════════════════
 
 ╔══╡ Multi-threaded:
-╟─ COPY:  25651.4 MB/s
-╟─ SCALE: 25454.5 MB/s
-╟─ ADD:   25495.2 MB/s
-╟─ TRIAD: 24863.8 MB/s
+╠══╡ (6 threads)
+╟─ COPY:  26586.4 MB/s
+╟─ SCALE: 28006.7 MB/s
+╟─ ADD:   25329.7 MB/s
+╟─ TRIAD: 26576.3 MB/s
 ╟─────────────────────
-║ Median: 25474.8 MB/s
+║ Median: 26581.3 MB/s
 ╚═════════════════════
 
-(single = (median = 25216.6, minimum = 24526.7, maximum = 25557.0), multi = (median = 25474.8, minimum = 24863.8, maximum = 25651.4))
+(single = (median = 26843.2, minimum = 26572.5, maximum = 26943.6), multi = (median = 26581.3, minimum = 25329.7, maximum = 28006.7))
 ```
 
 #### LoopVectorization
@@ -73,11 +75,16 @@ It is probably a good idea to start julia with `JULIA_EXLUSIVE=1 julia`, i.e. to
 By default a vector length of four times the size of the outermost cache is used (a rule of thumb ["laid down by Dr. Bandwidth"](https://blogs.fau.de/hager/archives/8263)). To measure the memory bandwidth for a few other factorsas well you might want to use `STREAMBenchmark.vector_length_dependence()`:
 
 ```julia
-julia> STREAMBenchmark.vector_length_dependence();
-1: 12582912 => 27972.0
-2: 25165824 => 26909.8
-3: 37748736 => 25931.3
-4: 50331648 => 23921.2
+julia> STREAMBenchmark.vector_length_dependence()
+1: 12582912 => 27101.3
+2: 25165824 => 27096.8
+3: 37748736 => 26879.4
+4: 50331648 => 26889.9
+Dict{Int64, Float64} with 4 entries:
+  37748736 => 26879.4
+  25165824 => 27096.8
+  12582912 => 27101.3
+  50331648 => 26889.9
 ```
 
 ## Comparison with original STREAM benchmark
