@@ -10,15 +10,14 @@ function with_avxt(f)
    @eval STREAMBenchmark.avxt() = false
 end
 
-"CI" in keys(ENV) && (@show ENV["CI"])
+less_memory =  get(ENV, "CI", false) && islinux()
 
 @testset "STREAMBenchmark.jl" begin
    @testset "Benchmarks" begin
-      @show STREAMBenchmark.default_vector_length()
       @test STREAMBenchmark.default_vector_length() >= 4*cachesize()[end]
-
-      STREAMBenchmark.default_vector_length() = cachesize()[end]
+      less_memory && (STREAMBenchmark.default_vector_length() = cachesize()[end])
       @show STREAMBenchmark.default_vector_length()
+      
       # memory_bandwidth
       @test keys(memory_bandwidth()) == (:median, :minimum, :maximum)
       GC.gc(true)
@@ -44,12 +43,14 @@ end
       GC.gc(true)
 
       # vector_length_dependence
-      let d = STREAMBenchmark.vector_length_dependence()
-         @test typeof(d) == Dict{Int64, Float64}
-         @test length(d) == 4
-         @test maximum(abs.(diff(collect(values(d))))) / median(values(d)) < 0.1
+      if !less_memory
+         let d = STREAMBenchmark.vector_length_dependence()
+            @test typeof(d) == Dict{Int64, Float64}
+            @test length(d) == 4
+            @test maximum(abs.(diff(collect(values(d))))) / median(values(d)) < 0.1
+         end
+         GC.gc(true)
       end
-      GC.gc(true)
       let d = STREAMBenchmark.vector_length_dependence(n=2)
          @test length(d) == 2
       end
