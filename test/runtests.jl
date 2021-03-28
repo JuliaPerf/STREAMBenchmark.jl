@@ -21,9 +21,9 @@ end
       # GC.gc()
       @test 1000 < memory_bandwidth(multithreading=false).median < 500_000
       # GC.gc()
-      with_avxt() do
-         @test 1000 < memory_bandwidth().median < 500_000
-      end
+      # with_avxt() do
+         # @test 1000 < memory_bandwidth().median < 500_000
+      # end
       # GC.gc()
       # println("123")
 
