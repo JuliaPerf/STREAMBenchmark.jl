@@ -33,20 +33,7 @@ Note that we count / assume write-allocates by default (you can use `write_alloc
 
 ### Multithreading
 
-If you start Julia with multiple threads (e.g. `julia -t 4`) and call `memory_bandwidth` the kernel loops will be run in parallel. To disable multithreading you can set the keyword argument `multithreading=false`:
-
-```julia
-julia> memory_bandwidth(verbose=true, multithreading=false)
-╔══╡ Single-threaded:
-╟─ COPY:  24153.9 MB/s
-╟─ SCALE: 24478.1 MB/s
-╟─ ADD:   25298.8 MB/s
-╟─ TRIAD: 24595.5 MB/s
-╟─────────────────────
-║ Median: 24536.8 MB/s
-╚═════════════════════
-(median = 24536.8, minimum = 24153.9, maximum = 25298.8)
-```
+If you start Julia with multiple threads (e.g. `julia -t 4`) and call `memory_bandwidth` the kernel loops will be run in parallel. To disable multithreading you can set the keyword argument `multithreading=false`.
 
 If you want to run both the single- and multi-threaded benchmark at once you can call `benchmark()`:
 
