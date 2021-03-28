@@ -10,14 +10,14 @@ function with_avxt(f)
    @eval STREAMBenchmark.avxt() = false
 end
 
-less_memory =  get(ENV, "CI", false) && islinux()
+less_memory = get(ENV, "CI", false) && Sys.islinux()
 
 @testset "STREAMBenchmark.jl" begin
    @testset "Benchmarks" begin
       @test STREAMBenchmark.default_vector_length() >= 4*cachesize()[end]
       less_memory && (STREAMBenchmark.default_vector_length() = cachesize()[end])
       @show STREAMBenchmark.default_vector_length()
-      
+
       # memory_bandwidth
       @test keys(memory_bandwidth()) == (:median, :minimum, :maximum)
       GC.gc(true)
