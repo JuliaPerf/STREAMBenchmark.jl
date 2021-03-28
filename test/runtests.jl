@@ -96,9 +96,10 @@ use_less_memory = true
 
                 try
                     STREAMBenchmark.compile_original_STREAM()
-                    @test isfile("stream")
+                    @test isfile("stream/stream")
                 catch e
                     @warn "Compilation of original C STREAM benchmark failed."
+                    println(e)
                 end
             end
         end

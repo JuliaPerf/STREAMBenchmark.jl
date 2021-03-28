@@ -11,7 +11,7 @@ function download_original_STREAM()
     return nothing
 end
 
-_default_compiler() = Sys.islinux ? (:gcc) : (:clang)
+_default_compiler() = Sys.islinux() ? (:gcc) : (:clang)
 
 """
     compile_original_STREAM(; compiler=_default_compiler(), multithreading=false)
