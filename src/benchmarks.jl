@@ -9,7 +9,7 @@ function _run_kernels(copy, scale, add, triad;
                       verbose=true,
                       N=default_vector_length(),
                       evals_per_sample=5,
-                      write_allocate=true)
+                      write_allocate=false)
     # initialize
     A, B, C, D, s = zeros(N), zeros(N), zeros(N), zeros(N), rand();
 
