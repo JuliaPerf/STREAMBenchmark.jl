@@ -5,8 +5,12 @@ function download_original_STREAM()
     println("- Creating folder \"stream\"")
     mkdir("stream")
     println("- Downloading C STREAM benchmark")
-    Downloads.download("https://www.cs.virginia.edu/stream/FTP/Code/stream.c", "stream/stream.c")
-    Downloads.download("https://www.cs.virginia.edu/stream/FTP/Code/mysecond.c", "stream/mysecond.c")
+    Downloads.download(
+        "https://www.cs.virginia.edu/stream/FTP/Code/stream.c", "stream/stream.c"
+    )
+    Downloads.download(
+        "https://www.cs.virginia.edu/stream/FTP/Code/mysecond.c", "stream/mysecond.c"
+    )
     println("- Done.")
     return nothing
 end
@@ -20,14 +24,18 @@ Compile the source code of the C STREAM benchmark ("stream/stream.c") into a bin
 """
 function compile_original_STREAM(; compiler=_default_compiler(), multithreading=false)
     if !isfile("stream/stream.c")
-        @warn("Couldn't find source code \"stream/stream.c\". Have you run STREAMBenchmark.download_original_STREAM()?")
+        @warn(
+            "Couldn't find source code \"stream/stream.c\". Have you run STREAMBenchmark.download_original_STREAM()?"
+        )
         return nothing
     end
 
     println("- Trying to compile \"stream.c\" using $(string(compiler))")
     if compiler == :clang
-        options = ["-Ofast", "-march=native", "-DSTREAM_ARRAY_SIZE=$(default_vector_length())"] # "-DNTIMES=30"
-    elseif compiler == :(gcc-10) || compiler == :gcc
+        options = [
+            "-Ofast", "-march=native", "-DSTREAM_ARRAY_SIZE=$(default_vector_length())"
+        ] # "-DNTIMES=30"
+    elseif compiler == :(gcc - 10) || compiler == :gcc
         options = ["-O3", "-DSTREAM_ARRAY_SIZE=$(default_vector_length())"]
     else
         error("Unknown compiler option: $compiler.")
@@ -46,7 +54,9 @@ Execute the binary of the C STREAM benchmark (i.e. "stream/stream").
 """
 function execute_original_STREAM()
     if !isfile("stream/stream")
-        @warn("Couldn't find executable \"stream/stream\". Have you run STREAMBenchmark.compile_original_STREAM()?")
+        @warn(
+            "Couldn't find executable \"stream/stream\". Have you run STREAMBenchmark.compile_original_STREAM()?"
+        )
     else
         run(`stream/stream`)
     end
