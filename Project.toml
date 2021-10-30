@@ -3,7 +3,7 @@ uuid = "05e9033e-e298-417a-adae-495536c11ad4"
 license = "MIT"
 desc = "STREAM benchmark to measure the sustainable memory bandwidth."
 authors = ["Carsten Bauer"]
-version = "0.2.0"
+version = "0.2.1"
 
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
@@ -12,7 +12,7 @@ LoopVectorization = "bdcacae8-1622-11e9-2a5c-532679323890"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [compat]
-BenchmarkTools = "0.6, 0.7"
+BenchmarkTools = "0.6, 0.7, 1.0"
 Downloads = "1.4"
 LoopVectorization = "0.12"
 julia = "1.6"

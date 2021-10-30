@@ -1,77 +1,77 @@
 avxt() = false
 
 macro threaded(code)
-    esc(:(if $(@__MODULE__).avxt()
+    return esc(:(
+        if $(@__MODULE__).avxt()
             @avxt($code)
         else
             @threads($code)
-        end))
+        end
+    ))
 end
-
 
 # multithreaded kernels
-function copy_threaded(C,A)
+function copy_threaded(C, A)
     @assert length(C) == length(A)
-    @threaded for i in eachindex(C,A)
+    @threaded for i in eachindex(C, A)
         @inbounds C[i] = A[i]
     end
-    nothing
+    return nothing
 end
 
-function scale_threaded(B,C,s)
+function scale_threaded(B, C, s)
     @assert length(C) == length(B)
     @threaded for i in eachindex(C)
         @inbounds B[i] = s * C[i]
     end
-    nothing
+    return nothing
 end
 
-function add_threaded(C,A,B)
+function add_threaded(C, A, B)
     @assert length(C) == length(B) == length(A)
     @threaded for i in eachindex(C)
         @inbounds C[i] = A[i] + B[i]
     end
-    nothing
+    return nothing
 end
 
-function triad_threaded(A,B,C,s)
+function triad_threaded(A, B, C, s)
     @assert length(C) == length(B) == length(A)
     @threaded for i in eachindex(C)
-        @inbounds A[i] = B[i] + s*C[i]
+        @inbounds A[i] = B[i] + s * C[i]
     end
-    nothing
+    return nothing
 end
-
 
 # kernels
-function copy(C,A)
+function copy(C, A)
     @assert length(C) == length(A)
-    for i in eachindex(C,A)
+    for i in eachindex(C, A)
         @inbounds C[i] = A[i]
     end
-    nothing
+    return nothing
 end
 
-function scale(B,C,s)
+function scale(B, C, s)
     @assert length(C) == length(B)
     for i in eachindex(C)
         @inbounds B[i] = s * C[i]
     end
-    nothing
+    return nothing
 end
 
-function add(C,A,B)
+function add(C, A, B)
     @assert length(C) == length(B) == length(A)
     for i in eachindex(C)
         @inbounds C[i] = A[i] + B[i]
     end
-    nothing
+    return nothing
 end
 
-function triad(A,B,C,s)
+function triad(A, B, C, s)
     @assert length(C) == length(B) == length(A)
     for i in eachindex(C)
-        @inbounds A[i] = B[i] + s*C[i]
+        @inbounds A[i] = B[i] + s * C[i]
     end
-    nothing
+    return nothing
 end
