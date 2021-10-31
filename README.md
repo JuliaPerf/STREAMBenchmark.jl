@@ -68,7 +68,9 @@ You can make STREAMBenchmarks.jl use [LoopVectorization](https://github.com/Juli
 
 ### Thread pinning
 
-It is probably a good idea to start julia with `JULIA_EXLUSIVE=1 julia -t4` (for 4 threads), i.e. to set the environmental variable `JULIA_EXCLUSIVE = 1`. This should pin the used threads to the first `1:nthreads()` cores. On a cluster you might also want to consider using `numactl --physcpubind 0,1,2,3 julia -t4` to bind the julia process to the list of virtual CPUs. There is also `likwid-pin -c 0,1,2,3 julia -t4` (see [likwid-pin](https://github.com/RRZE-HPC/likwid/wiki/Likwid-Pin)). See https://discourse.julialang.org/t/thread-affinitization-pinning-julia-threads-to-cores/58069 for a discussion of options.
+It is recommended to start julia with `JULIA_EXLUSIVE=1 julia -t4` (for 4 threads), i.e. to set the environmental variable `JULIA_EXCLUSIVE = 1`. This should pin the used threads to the first `1:nthreads()` cores. Alternatively, one may use [ThreadPinning.jl](https://github.com/carstenbauer/ThreadPinning.jl) or [LIKWID.jl](https://github.com/JuliaPerf/LIKWID.jl).
+
+See https://discourse.julialang.org/t/thread-affinitization-pinning-julia-threads-to-cores/58069 for a discussion of other options like `numactl`.
 
 ### Vector length
 
