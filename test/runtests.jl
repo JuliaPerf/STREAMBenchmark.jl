@@ -1,6 +1,5 @@
 using STREAMBenchmark
 using Test, Statistics
-using CpuId: cachesize
 
 Base.Threads.nthreads() > 1 || (@warn Running test suite with only a single thread!)
 
@@ -15,7 +14,7 @@ use_less_memory = true
 
 @testset "STREAMBenchmark.jl" begin
     @testset "Benchmarks" begin
-        @test STREAMBenchmark.default_vector_length() >= 4*cachesize()[end] / sizeof(Float64)
+        @test STREAMBenchmark.default_vector_length() >= STREAMBenchmark.last_cachesize() / sizeof(Float64)
 
         use_less_memory && (STREAMBenchmark.default_vector_length() = 10)
         @show STREAMBenchmark.default_vector_length()

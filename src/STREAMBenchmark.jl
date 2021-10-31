@@ -1,6 +1,6 @@
 module STREAMBenchmark
 
-using CpuId, BenchmarkTools
+using BenchmarkTools
 using Statistics, Downloads
 using Base.Threads: nthreads, @threads
 using LoopVectorization

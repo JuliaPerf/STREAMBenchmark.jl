@@ -1,7 +1,7 @@
 """
 Four times the size of the outermost cache (rule of thumb "laid down by Dr. Bandwidth").
 """
-default_vector_length() = Int(4 * last(cachesize()) / sizeof(Float64))
+default_vector_length() = Int(4 * last_cachesize() / sizeof(Float64))
 
 _nthreads_string() = avxt() ? "@avxt" : string(nthreads())
 
@@ -100,6 +100,14 @@ function memory_bandwidth(; verbose=false, multithreading=nthreads() > 1, kwargs
     return nt
 end
 
+function last_cachesize()
+    Base.Cartesian.@nexprs 4 i -> begin
+        cs = Int(LoopVectorization.VectorizationBase.cache_size(Val(i)))
+        cs == 0 || return cs
+    end
+    0
+end
+
 """
     vector_length_dependence(; n=4, evals_per_sample=1) -> Dict
 
@@ -107,7 +115,7 @@ Measure the memory bandwidth for multiple vector lengths corresponding to
 factors of the size of the outermost cache.
 """
 function vector_length_dependence(; n=4, evals_per_sample=1)
-    outer_cache_size = CpuId.cachesize()[end] / sizeof(Float64)
+    outer_cache_size = last_cachesize() / sizeof(Float64)
     Ns = floor.(Int, range(1, 4; length=n) .* outer_cache_size)
     membws = Dict{Int,Float64}()
     for (i, N) in pairs(Ns)
