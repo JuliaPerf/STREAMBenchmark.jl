@@ -5,7 +5,7 @@
 
 Getting a realistic **estimate** of the achievable (maximal) **memory bandwidth**.
 
-**Note** This package implements a simple variant of the [original STREAM benchmark](https://www.cs.virginia.edu/stream/).
+**Note:** This package implements a simple variant of the [original STREAM benchmark](https://www.cs.virginia.edu/stream/). There also is [BandwidthBenchmark.jl](https://github.com/JuliaPerf/BandwidthBenchmark.jl), which is a variant of [TheBandwidthBenchmark](https://github.com/RRZE-HPC/TheBandwidthBenchmark) (an "extended STREAM benchmark").
 
 ## Usage
 
