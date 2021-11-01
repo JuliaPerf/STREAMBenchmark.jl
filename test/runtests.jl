@@ -9,7 +9,7 @@ function with_avxt(f)
     @eval STREAMBenchmark.avxt() = false
 end
 
-use_less_memory = true
+use_less_memory = false
 @show use_less_memory
 
 @testset "STREAMBenchmark.jl" begin
