@@ -33,8 +33,9 @@ function compile_original_STREAM(; compiler=_default_compiler(), multithreading=
     println("- Trying to compile \"stream.c\" using $(string(compiler))")
     if compiler == :clang
         options = [
-            "-Ofast", "-march=native", "-DSTREAM_ARRAY_SIZE=$(default_vector_length())"
+            "-Ofast", "-DSTREAM_ARRAY_SIZE=$(default_vector_length())"
         ] # "-DNTIMES=30"
+        ((Sys.ARCH === :x86_64) || (Sys.ARCH === :i686)) && push!(options, "-march=native")
     elseif compiler == :(gcc - 10) || compiler == :gcc
         options = ["-O3", "-DSTREAM_ARRAY_SIZE=$(default_vector_length())"]
     else
