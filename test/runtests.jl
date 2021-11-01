@@ -9,20 +9,20 @@ function with_avxt(f)
     @eval STREAMBenchmark.avxt() = false
 end
 
-use_less_memory = false
+use_less_memory = true
 @show use_less_memory
 
 @testset "STREAMBenchmark.jl" begin
     @testset "Benchmarks" begin
         @test STREAMBenchmark.default_vector_length() >= STREAMBenchmark.last_cachesize() / sizeof(Float64)
 
-        use_less_memory && (STREAMBenchmark.default_vector_length() = 1_000_000)
+        use_less_memory && (STREAMBenchmark.default_vector_length() = 100_000)
         @show STREAMBenchmark.default_vector_length()
 
         # memory_bandwidth
         @test keys(memory_bandwidth()) == (:median, :minimum, :maximum)
-        @test 1000 < memory_bandwidth().median < 500_000
-        @test 1000 < memory_bandwidth(multithreading=false).median < 500_000
+        @test 100 < memory_bandwidth().median < 500_000
+        @test 100 < memory_bandwidth(multithreading=false).median < 500_000
         with_avxt() do
             @test 1000 < memory_bandwidth().median < 500_000
         end
