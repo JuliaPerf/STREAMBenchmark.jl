@@ -16,7 +16,7 @@ use_less_memory = true
     @testset "Benchmarks" begin
         @test STREAMBenchmark.default_vector_length() >= STREAMBenchmark.last_cachesize() / sizeof(Float64)
 
-        use_less_memory && (STREAMBenchmark.default_vector_length() = 1_000_000)
+        use_less_memory && (STREAMBenchmark.default_vector_length() = 10_000)
         @show STREAMBenchmark.default_vector_length()
 
         # memory_bandwidth
@@ -37,7 +37,7 @@ use_less_memory = true
             @test keys(nt.multi) == (:median, :minimum, :maximum)
         end  
         # vector_length_dependence
-        let d = STREAMBenchmark.vector_length_dependence()
+        let d = STREAMBenchmark.vector_length_dependence(multithreading=false)
             @test typeof(d) == Dict{Int64, Float64}
             @test length(d) == 4
             @test maximum(abs.(diff(collect(values(d))))) / median(values(d)) < 0.2

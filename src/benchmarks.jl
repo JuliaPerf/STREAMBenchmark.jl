@@ -114,12 +114,12 @@ end
 Measure the memory bandwidth for multiple vector lengths corresponding to
 factors of the size of the outermost cache.
 """
-function vector_length_dependence(; n=4, evals_per_sample=1)
+function vector_length_dependence(; n=4, evals_per_sample=1, kwargs...)
     outer_cache_size = last_cachesize() / sizeof(Float64)
     Ns = floor.(Int, range(1, 4; length=n) .* outer_cache_size)
     membws = Dict{Int,Float64}()
     for (i, N) in pairs(Ns)
-        m, _, _ = memory_bandwidth(; N=N, evals_per_sample=evals_per_sample)
+        m, _, _ = memory_bandwidth(; N=N, evals_per_sample=evals_per_sample, kwargs...)
         membws[N] = m
         println(i, ": ", N => m)
     end
