@@ -16,7 +16,7 @@ use_less_memory = true
     @testset "Benchmarks" begin
         @test STREAMBenchmark.default_vector_length() >= STREAMBenchmark.last_cachesize() / sizeof(Float64)
 
-        use_less_memory && (STREAMBenchmark.default_vector_length() = 10000)
+        use_less_memory && (STREAMBenchmark.default_vector_length() = 100_000)
         @show STREAMBenchmark.default_vector_length()
 
         # memory_bandwidth
