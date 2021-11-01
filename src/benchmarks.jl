@@ -25,22 +25,22 @@ function _run_kernels(
     g = t -> N * β * 1e-6 / t
 
     # COPY
-    t_copy = @belapsed copy($C, $A) samples = 10 evals = evals_per_sample
+    t_copy = @belapsed $copy($C, $A) samples = 10 evals = evals_per_sample
     bw_copy = f(t_copy)
     verbose && println("╟─ COPY:  ", round(bw_copy; digits=1), " MB/s")
 
     # SCALE
-    t_scale = @belapsed scale($B, $C, $s) samples = 10 evals = evals_per_sample
+    t_scale = @belapsed $scale($B, $C, $s) samples = 10 evals = evals_per_sample
     bw_scale = f(t_scale)
     verbose && println("╟─ SCALE: ", round(bw_scale; digits=1), " MB/s")
 
     # ADD
-    t_add = @belapsed add($C, $A, $B) samples = 10 evals = evals_per_sample
+    t_add = @belapsed $add($C, $A, $B) samples = 10 evals = evals_per_sample
     bw_add = g(t_add)
     verbose && println("╟─ ADD:   ", round(bw_add; digits=1), " MB/s")
 
     # TRIAD
-    t_triad = @belapsed triad($A, $B, $C, $s) samples = 10 evals = evals_per_sample
+    t_triad = @belapsed $triad($A, $B, $C, $s) samples = 10 evals = evals_per_sample
     bw_triad = g(t_triad)
     verbose && println("╟─ TRIAD: ", round(bw_triad; digits=1), " MB/s")
 
