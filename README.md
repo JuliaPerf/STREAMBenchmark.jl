@@ -1,5 +1,6 @@
 # STREAMBenchmark
 
+[![CI@PC2](https://git.uni-paderborn.de/pc2-ci/julia/STREAMBenchmark-jl/badges/main/pipeline.svg?key_text=CI@PC2)](https://git.uni-paderborn.de/pc2-ci/julia/STREAMBenchmark-jl/-/pipelines)
 [![Build Status](https://github.com/JuliaPerf/STREAMBenchmark.jl/workflows/CI/badge.svg)](https://github.com/JuliaPerf/STREAMBenchmark.jl/actions)
 [![Coverage](https://codecov.io/gh/JuliaPerf/STREAMBenchmark.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaPerf/STREAMBenchmark.jl)
 
