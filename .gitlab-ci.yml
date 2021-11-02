@@ -6,7 +6,7 @@ julia/1.6:
   tags:
     - bauerc-noctua
   variables:
-    SCHEDULER_PARAMETERS: "-A pc2-mitarbeiter -p short"
+    SCHEDULER_PARAMETERS: "-A pc2-mitarbeiter -p short -t 00:15:00"
   only:
     - main
     - pushes
@@ -25,7 +25,7 @@ julia/1.7-rc1:
   tags:
     - bauerc-noctua
   variables:
-    SCHEDULER_PARAMETERS: "-A pc2-mitarbeiter -p short"
+    SCHEDULER_PARAMETERS: "-A pc2-mitarbeiter -p short -t 00:15:00"
   only:
     - main
     - pushes
