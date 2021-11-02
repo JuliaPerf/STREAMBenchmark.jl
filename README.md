@@ -1,6 +1,6 @@
 # STREAMBenchmark
 
-[![CI@PC2](https://git.uni-paderborn.de/pc2-ci/julia/STREAMBenchmark-jl/badges/main/pipeline.svg?key_text=CI@PC2)](https://git.uni-paderborn.de/pc2-ci/julia/STREAMBenchmark-jl/-/pipelines)
+[![CI@PC2](https://git.uni-paderborn.de/pc2-ci/julia/STREAMBenchmark-jl/badges/master/pipeline.svg?key_text=CI@PC2)](https://git.uni-paderborn.de/pc2-ci/julia/STREAMBenchmark-jl/-/pipelines)
 [![Build Status](https://github.com/JuliaPerf/STREAMBenchmark.jl/workflows/CI/badge.svg)](https://github.com/JuliaPerf/STREAMBenchmark.jl/actions)
 [![Coverage](https://codecov.io/gh/JuliaPerf/STREAMBenchmark.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaPerf/STREAMBenchmark.jl)
 
@@ -8,70 +8,96 @@
 
 **Note:** This package implements a simple variant of the [original STREAM benchmark](https://www.cs.virginia.edu/stream/). There also is [BandwidthBenchmark.jl](https://github.com/JuliaPerf/BandwidthBenchmark.jl), which is a variant of [TheBandwidthBenchmark](https://github.com/RRZE-HPC/TheBandwidthBenchmark) (an "extended STREAM benchmark").
 
-## Usage
+## `memory_bandwidth()`
 
 The function `memory_bandwidth()` estimates the memory bandwidth in megabytes per second (MB/s). It returns a named tuple indicating the median, minimum, and maximum of the four measurements.
 
-```julia
-julia> using STREAMBenchmark
+**Note:** To obtain a reasonable estimate you should start julia with `N` threads, where `N` should match the number of cores (e.g. of a NUMA domain).
 
-julia> memory_bandwidth()
-(median = 26885.2, minimum = 26475.1, maximum = 27437.5)
+**Linux note:** If possible, you should pin the Julia threads (for example to the cores of a NUMA domain) to decrease the variance of the benchmark. The simplest ways to pin `N` Julia threads to the first `N` cores (compact pinning) are 1) settings `JULIA_EXLUSIVE=1` or 2) using [ThreadPinning.jl's](https://github.com/carstenbauer/ThreadPinning.jl) `pinthreads(:compact)`.
+
+```julia
+julia> using ThreadPinning
+
+julia> pinthreads(:compact)
+
+julia> using STREAMBenchmark
 
 julia> memory_bandwidth(verbose=true)
 ╔══╡ Multi-threaded:
-╠══╡ (6 threads)
-╟─ COPY:  26659.2 MB/s
-╟─ SCALE: 27236.0 MB/s
-╟─ ADD:   26017.5 MB/s
-╟─ TRIAD: 26719.0 MB/s
+╠══╡ (10 threads)
+╟─ COPY:  101153.8 MB/s
+╟─ SCALE: 100908.0 MB/s
+╟─ ADD:   100516.0 MB/s
+╟─ TRIAD: 100549.5 MB/s
 ╟─────────────────────
-║ Median: 26689.1 MB/s
+║ Median: 100728.8 MB/s
 ╚═════════════════════
-(median = 26689.1, minimum = 26017.5, maximum = 27236.0)
+(median = 100728.8, minimum = 100516.0, maximum = 101153.8)
 ```
 
-Note that we count / assume write-allocates by default (you can use `write_allocate=false` to disregard them).
+### Keyword arguments
+* `nthreads` (default `Threads.nthreads()`): Use `nthreads` threads for the benchmark. It must hold `1 ≤ nthreads ≤ Threads.nthreads()`.
+* `write_allocate` (default: `true`): assume the use / count write allocates.
 
-### Multithreading
+## `benchmark()`
 
-If you start Julia with multiple threads (e.g. `julia -t 4`) and call `memory_bandwidth` the kernel loops will be run in parallel. To disable multithreading you can set the keyword argument `multithreading=false`.
-
-If you want to run both the single- and multi-threaded benchmark at once you can call `benchmark()`:
+If you want to run both the single- and multi-threaded benchmark at once you can call `benchmark()` which produces an output like this:
 
 ```julia
 julia> benchmark()
 ╔══╡ Single-threaded:
-╟─ COPY:  26572.5 MB/s
-╟─ SCALE: 26744.5 MB/s
-╟─ ADD:   26942.0 MB/s
-╟─ TRIAD: 26943.6 MB/s
+╟─ COPY:  19088.6 MB/s
+╟─ SCALE: 18699.8 MB/s
+╟─ ADD:   17518.3 MB/s
+╟─ TRIAD: 17501.3 MB/s
 ╟─────────────────────
-║ Median: 26843.2 MB/s
+║ Median: 18109.0 MB/s
 ╚═════════════════════
 
 ╔══╡ Multi-threaded:
-╠══╡ (6 threads)
-╟─ COPY:  26586.4 MB/s
-╟─ SCALE: 28006.7 MB/s
-╟─ ADD:   25329.7 MB/s
-╟─ TRIAD: 26576.3 MB/s
+╠══╡ (10 threads)
+╟─ COPY:  101497.9 MB/s
+╟─ SCALE: 101381.9 MB/s
+╟─ ADD:   100281.5 MB/s
+╟─ TRIAD: 100828.4 MB/s
 ╟─────────────────────
-║ Median: 26581.3 MB/s
+║ Median: 101105.2 MB/s
 ╚═════════════════════
 
-(single = (median = 26843.2, minimum = 26572.5, maximum = 26943.6), multi = (median = 26581.3, minimum = 25329.7, maximum = 28006.7))
+(single = (median = 18109.0, minimum = 17501.3, maximum = 19088.6), multi = (median = 101105.2, minimum = 100281.5, maximum = 101497.9))
 ```
 
-#### LoopVectorization
+## Scaling
 
-You can make STREAMBenchmarks.jl use [LoopVectorization](https://github.com/JuliaSIMD/LoopVectorization.jl)'s `@avxt` instead of `@threads` by setting `STREAMBenchmark.avxt() = true`.
+### Number of threads
 
-### Thread pinning
+To assess the scaling of the maximal memory bandwidth with the number of threads, we provide the function `scaling_benchmark()`
 
-It is recommended to start julia with `JULIA_EXLUSIVE=1 julia -t4` (for 4 threads), i.e. to set the environmental variable `JULIA_EXCLUSIVE = 1`. This should pin the used threads to the first `1:nthreads()` cores. Alternatively, one may use [ThreadPinning.jl](https://github.com/carstenbauer/ThreadPinning.jl) or [LIKWID.jl](https://github.com/JuliaPerf/LIKWID.jl).
-
-See https://discourse.julialang.org/t/thread-affinitization-pinning-julia-threads-to-cores/58069 for a discussion of other options like `numactl`.
+```julia
+julia> scaling_benchmark()
+# Threads: 1	Max. memory bandwidth: 19058.7
+# Threads: 2	Max. memory bandwidth: 37511.2
+# Threads: 3	Max. memory bandwidth: 55204.6
+# Threads: 4	Max. memory bandwidth: 68706.6
+# Threads: 5	Max. memory bandwidth: 76869.9
+# Threads: 6	Max. memory bandwidth: 83669.9
+# Threads: 7	Max. memory bandwidth: 88656.0
+# Threads: 8	Max. memory bandwidth: 93701.0
+# Threads: 9	Max. memory bandwidth: 97093.6
+# Threads: 10	Max. memory bandwidth: 101293.9
+10-element Vector{Float64}:
+  19058.7
+  37511.2
+  55204.6
+  68706.6
+  76869.9
+  83669.9
+  88656.0
+  93701.0
+  97093.6
+ 101293.9
+ ```
 
 ### Vector length
 
@@ -79,15 +105,15 @@ By default a vector length of four times the size of the outermost cache is used
 
 ```julia
 julia> STREAMBenchmark.vector_length_dependence()
-1: 12582912 => 27101.3
-2: 25165824 => 27096.8
-3: 37748736 => 26879.4
-4: 50331648 => 26889.9
+1: 3604480 => 121692.2
+2: 7208960 => 99755.5
+3: 10813440 => 98705.5
+4: 14417920 => 98660.5
 Dict{Int64, Float64} with 4 entries:
-  37748736 => 26879.4
-  25165824 => 27096.8
-  12582912 => 27101.3
-  50331648 => 26889.9
+  10813440 => 98705.5
+  7208960  => 99755.5
+  3604480  => 1.21692e5
+  14417920 => 98660.5
 ```
 
 ## Comparison with original STREAM benchmark
@@ -104,7 +130,7 @@ julia> STREAMBenchmark.download_original_STREAM()
 
 julia> STREAMBenchmark.compile_original_STREAM(compiler=:gcc, multithreading=false)
 - Trying to compile "stream.c" using gcc
-  Using options: -O3 -DSTREAM_ARRAY_SIZE=33554432
+  Using options: -O3 -DSTREAM_ARRAY_SIZE=14417920
 - Done.
 
 julia> STREAMBenchmark.execute_original_STREAM()
@@ -113,16 +139,16 @@ STREAM version $Revision: 5.10 $
 -------------------------------------------------------------
 This system uses 8 bytes per array element.
 -------------------------------------------------------------
-Array size = 33554432 (elements), Offset = 0 (elements)
-Memory per array = 256.0 MiB (= 0.2 GiB).
-Total memory required = 768.0 MiB (= 0.8 GiB).
+Array size = 14417920 (elements), Offset = 0 (elements)
+Memory per array = 110.0 MiB (= 0.1 GiB).
+Total memory required = 330.0 MiB (= 0.3 GiB).
 Each kernel will be executed 10 times.
  The *best* time for each kernel (excluding the first iteration)
  will be used to compute the reported bandwidth.
 -------------------------------------------------------------
 Your clock granularity/precision appears to be 1 microseconds.
-Each test below will take on the order of 31889 microseconds.
-   (= 31889 clock ticks)
+Each test below will take on the order of 11047 microseconds.
+   (= 11047 clock ticks)
 Increase the size of the arrays if this shows that
 you are not getting at least 20 clock ticks per test.
 -------------------------------------------------------------
@@ -131,35 +157,38 @@ For best results, please be sure you know the
 precision of your system timer.
 -------------------------------------------------------------
 Function    Best Rate MB/s  Avg time     Min time     Max time
-Copy:           10745.4     0.049993     0.049963     0.050080
-Scale:          10774.3     0.049869     0.049829     0.049904
-Add:            11538.8     0.069876     0.069791     0.070274
-Triad:          11429.4     0.070508     0.070459     0.070640
+Copy:           11039.8     0.020987     0.020896     0.021092
+Scale:          12491.1     0.018509     0.018468     0.018537
+Add:            13370.0     0.025934     0.025881     0.026183
+Triad:          13396.9     0.025903     0.025829     0.026223
 -------------------------------------------------------------
 Solution Validates: avg error less than 1.000000e-13 on all three arrays
 -------------------------------------------------------------
 
-julia> benchmark(write_allocate=false) # the original benchmark doesn't count / assumes the absence of write-allocates
+julia> memory_bandwidth(verbose=true, nthreads=1, write_allocate=false) # the original benchmark doesn't count / assumes the absence of write-allocates
 ╔══╡ Single-threaded:
-╟─ COPY:  10699.4 MB/s
-╟─ SCALE: 10542.2 MB/s
-╟─ ADD:   11088.3 MB/s
-╟─ TRIAD: 11099.2 MB/s
+╠══╡ (1 threads)
+╟─ COPY:  12749.1 MB/s
+╟─ SCALE: 12468.2 MB/s
+╟─ ADD:   13095.3 MB/s
+╟─ TRIAD: 13131.2 MB/s
 ╟─────────────────────
-║ Median: 10893.9 MB/s
+║ Median: 12922.2 MB/s
 ╚═════════════════════
-
-╔══╡ Multi-threaded:
-╟─ COPY:  10625.1 MB/s
-╟─ SCALE: 10226.7 MB/s
-╟─ ADD:   11052.4 MB/s
-╟─ TRIAD: 10902.9 MB/s
-╟─────────────────────
-║ Median: 10764.0 MB/s
-╚═════════════════════
-
-(single = (median = 10893.9, minimum = 10542.2, maximum = 11099.2), multi = (median = 10764.0, minimum = 10226.7, maximum = 11052.4))
+(median = 12922.2, minimum = 12468.2, maximum = 13131.2)
 ```
+
+## Further Options and Comments
+
+### LoopVectorization
+
+You can make STREAMBenchmarks.jl use [LoopVectorization](https://github.com/JuliaSIMD/LoopVectorization.jl)'s `@avxt` instead of `@threads` by setting `STREAMBenchmark.avxt() = true`. Note, however, that this only works if `nthreads=1` (single thread is used) or `nthreads=Threads.nthreads()` (all threads are used). This because `@avxt` isn't compatible with our way to let the benchmark only run on a subset of the available Julia threads.
+
+### Thread pinning
+
+It is recommended to either set the environmental variable `JULIA_EXCLUSIVE = 1` or use `pinthreads(:compact)` from [ThreadPinning.jl](https://github.com/carstenbauer/ThreadPinning.jl) to pin the used Julia threads to the first `1:nthreads` cores.
+
+See https://discourse.julialang.org/t/thread-affinitization-pinning-julia-threads-to-cores/58069 for a discussion of other options like `numactl` (with caveats).
 
 ## Resources
 
