@@ -1,7 +1,7 @@
 using STREAMBenchmark
 using Test, Statistics
 
-Base.Threads.nthreads() > 1 || (@warn Running test suite with only a single thread!)
+Base.Threads.nthreads() > 1 || (@warn "Running test suite with only a single thread!")
 
 # check if we are a GitHub runner
 const is_github_runner = haskey(ENV, "GITHUB_ACTIONS")
