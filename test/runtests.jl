@@ -24,7 +24,7 @@ use_less_memory = true
         @test 100 < memory_bandwidth().median < 500_000
         @test 100 < memory_bandwidth(multithreading=false).median < 500_000
         with_avxt() do
-            @test 1000 < memory_bandwidth().median < 500_000
+            @test 100 < memory_bandwidth().median < 500_000
         end
 
         # TODO: add verbose=true test
