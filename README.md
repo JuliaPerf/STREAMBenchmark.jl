@@ -39,6 +39,7 @@ julia> memory_bandwidth(verbose=true)
 ### Keyword arguments
 * `nthreads` (default `Threads.nthreads()`): Use `nthreads` threads for the benchmark. It must hold `1 ≤ nthreads ≤ Threads.nthreads()`.
 * `write_allocate` (default: `true`): assume the use / count write allocates.
+* `verbose` (default: `false`): verbose output, including the individual results of the streaming kernels.
 
 ## `benchmark()`
 
