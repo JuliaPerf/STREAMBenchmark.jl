@@ -25,22 +25,22 @@ function _run_kernels(
     g = t -> N * β * 1e-6 / t
 
     # COPY
-    t_copy = @belapsed copy($C, $A) samples = 10 evals = evals_per_sample
+    t_copy = @belapsed $copy($C, $A) samples = 10 evals = evals_per_sample
     bw_copy = f(t_copy)
     verbose && println("╟─ COPY:  ", round(bw_copy; digits=1), " MB/s")
 
     # SCALE
-    t_scale = @belapsed scale($B, $C, $s) samples = 10 evals = evals_per_sample
+    t_scale = @belapsed $scale($B, $C, $s) samples = 10 evals = evals_per_sample
     bw_scale = f(t_scale)
     verbose && println("╟─ SCALE: ", round(bw_scale; digits=1), " MB/s")
 
     # ADD
-    t_add = @belapsed add($C, $A, $B) samples = 10 evals = evals_per_sample
+    t_add = @belapsed $add($C, $A, $B) samples = 10 evals = evals_per_sample
     bw_add = g(t_add)
     verbose && println("╟─ ADD:   ", round(bw_add; digits=1), " MB/s")
 
     # TRIAD
-    t_triad = @belapsed triad($A, $B, $C, $s) samples = 10 evals = evals_per_sample
+    t_triad = @belapsed $triad($A, $B, $C, $s) samples = 10 evals = evals_per_sample
     bw_triad = g(t_triad)
     verbose && println("╟─ TRIAD: ", round(bw_triad; digits=1), " MB/s")
 
@@ -102,7 +102,7 @@ end
 
 function last_cachesize()
     Base.Cartesian.@nexprs 4 i -> begin
-        cs = Int(LoopVectorization.VectorizationBase.cache_size(Val(i)))
+        cs = Int(LoopVectorization.VectorizationBase.cache_size(Val(5-i)))
         cs == 0 || return cs
     end
     0
@@ -114,12 +114,12 @@ end
 Measure the memory bandwidth for multiple vector lengths corresponding to
 factors of the size of the outermost cache.
 """
-function vector_length_dependence(; n=4, evals_per_sample=1)
+function vector_length_dependence(; n=4, evals_per_sample=1, kwargs...)
     outer_cache_size = last_cachesize() / sizeof(Float64)
     Ns = floor.(Int, range(1, 4; length=n) .* outer_cache_size)
     membws = Dict{Int,Float64}()
     for (i, N) in pairs(Ns)
-        m, _, _ = memory_bandwidth(; N=N, evals_per_sample=evals_per_sample)
+        m, _, _ = memory_bandwidth(; N=N, evals_per_sample=evals_per_sample, kwargs...)
         membws[N] = m
         println(i, ": ", N => m)
     end

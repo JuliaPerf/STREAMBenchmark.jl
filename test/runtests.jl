@@ -14,7 +14,7 @@ end
 
 VECTOR_LENGTH = 0
 if is_github_runner
-    VECTOR_LENGTH = 1_000_000
+    VECTOR_LENGTH = 100_000
 end
 if haskey(ENV, "STREAM_VECTOR_LENGTH")
     VECTOR_LENGTH = parse(Int, ENV["STREAM_VECTOR_LENGTH"])
@@ -32,10 +32,10 @@ end
 
         # memory_bandwidth
         @test keys(memory_bandwidth()) == (:median, :minimum, :maximum)
-        @test 1000 < memory_bandwidth().median < 500_000
-        @test 1000 < memory_bandwidth(multithreading=false).median < 500_000
+        @test 100 < memory_bandwidth().median < 500_000
+        @test 100 < memory_bandwidth(multithreading=false).median < 500_000
         with_avxt() do
-            @test 1000 < memory_bandwidth().median < 500_000
+            @test 100 < memory_bandwidth().median < 500_000
         end
 
         # TODO: add verbose=true test
@@ -48,7 +48,7 @@ end
             @test keys(nt.multi) == (:median, :minimum, :maximum)
         end  
         # vector_length_dependence
-        let d = STREAMBenchmark.vector_length_dependence()
+        let d = STREAMBenchmark.vector_length_dependence(multithreading=false)
             @test typeof(d) == Dict{Int64, Float64}
             @test length(d) == 4
             @test maximum(abs.(diff(collect(values(d))))) / median(values(d)) < 0.2
