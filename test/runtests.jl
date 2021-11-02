@@ -32,14 +32,17 @@ end
 
         # memory_bandwidth
         @test keys(memory_bandwidth()) == (:median, :minimum, :maximum)
-        @test 100 < memory_bandwidth().median < 500_000
-        @test 100 < memory_bandwidth(multithreading=false).median < 500_000
+        @test 100 < memory_bandwidth().median < 1_000_000
+        @test 100 < memory_bandwidth(nthreads=1).median < 1_000_000
         with_avxt() do
-            @test 100 < memory_bandwidth().median < 500_000
+            @test 100 < memory_bandwidth().median < 1_000_000
         end
+        @test !isnothing(memory_bandwidth(nthreads=max(Threads.nthreads()-1,1)))
 
         # TODO: add verbose=true test
-        @test memory_bandwidth().median > memory_bandwidth(write_allocate=false).median
+        membw = memory_bandwidth().median
+        membw_nowrtalloc = memory_bandwidth(write_allocate=false).median
+        @test (membw > membw_nowrtalloc) || (abs(membw - membw_nowrtalloc) < 0.1 * membw)
 
         # benchmark
         let nt = benchmark()
@@ -48,7 +51,7 @@ end
             @test keys(nt.multi) == (:median, :minimum, :maximum)
         end  
         # vector_length_dependence
-        let d = STREAMBenchmark.vector_length_dependence(multithreading=false)
+        let d = STREAMBenchmark.vector_length_dependence(nthreads=1)
             @test typeof(d) == Dict{Int64, Float64}
             @test length(d) == 4
             @test maximum(abs.(diff(collect(values(d))))) / median(values(d)) < 0.2
@@ -56,6 +59,11 @@ end
         let d = STREAMBenchmark.vector_length_dependence(n=2)
             @test length(d) == 2
         end
+
+        # scaling benchmark
+        membws = scaling_benchmark()
+        @test typeof(membws) == Vector{Float64}
+        @test length(membws) == Threads.nthreads()
     end
 
     @testset "Kernels" begin
@@ -64,32 +72,43 @@ end
         C = [42.0,42.0,42.0,42.0,42.0]
         s = 13
 
+        nthreads = min(2, Threads.nthreads())
+        thread_indices = STREAMBenchmark._threadidcs(length(A), nthreads)
+
         STREAMBenchmark.copy(C, A)
         @test C == A
-        STREAMBenchmark.copy_threaded(C, A)
+        STREAMBenchmark.copy_allthreads(C, A)
+        @test C == A
+        STREAMBenchmark.copy_nthreads(C, A; nthreads, thread_indices)
         @test C == A
         STREAMBenchmark.scale(B,C,s)
         @test B ≈ s .* C
-        STREAMBenchmark.scale_threaded(B,C,s)
+        STREAMBenchmark.scale_allthreads(B,C,s)
+        @test B ≈ s .* C
+        STREAMBenchmark.scale_nthreads(B,C,s; nthreads, thread_indices)
         @test B ≈ s .* C
         STREAMBenchmark.add(C,A,B)
         @test C ≈ A .+ B
-        STREAMBenchmark.add_threaded(C,A,B)
+        STREAMBenchmark.add_allthreads(C,A,B)
+        @test C ≈ A .+ B
+        STREAMBenchmark.add_nthreads(C,A,B; nthreads, thread_indices)
         @test C ≈ A .+ B
         STREAMBenchmark.triad(A,B,C,s)
         @test A ≈ B .+ s .* C
-        STREAMBenchmark.triad_threaded(A,B,C,s)
+        STREAMBenchmark.triad_allthreads(A,B,C,s)
+        @test A ≈ B .+ s .* C
+        STREAMBenchmark.triad_nthreads(A,B,C,s; nthreads, thread_indices)
         @test A ≈ B .+ s .* C
 
         # @avxt threading
         with_avxt() do
-           STREAMBenchmark.copy_threaded(C, A)
+           STREAMBenchmark.copy_allthreads(C, A)
            @test C == A
-           STREAMBenchmark.scale_threaded(B,C,s)
+           STREAMBenchmark.scale_allthreads(B,C,s)
            @test B ≈ s .* C
-           STREAMBenchmark.add_threaded(C,A,B)
+           STREAMBenchmark.add_allthreads(C,A,B)
            @test C ≈ A .+ B
-           STREAMBenchmark.triad_threaded(A,B,C,s)
+           STREAMBenchmark.triad_allthreads(A,B,C,s)
            @test A ≈ B .+ s .* C
         end
     end
