@@ -3,20 +3,31 @@ using Test, Statistics
 
 Base.Threads.nthreads() > 1 || (@warn Running test suite with only a single thread!)
 
+# check if we are a GitHub runner
+const is_github_runner = haskey(ENV, "GITHUB_ACTIONS")
+
 function with_avxt(f)
     @eval STREAMBenchmark.avxt() = true
     f()
     @eval STREAMBenchmark.avxt() = false
 end
 
-use_less_memory = true
-@show use_less_memory
+VECTOR_LENGTH = 0
+if is_github_runner
+    VECTOR_LENGTH = 1_000_000
+end
+if haskey(ENV, "STREAM_VECTOR_LENGTH")
+    VECTOR_LENGTH = parse(Int, ENV["STREAM_VECTOR_LENGTH"])
+end
+if !iszero(VECTOR_LENGTH)
+    @info("Using vector length: ", VECTOR_LENGTH)
+end
 
 @testset "STREAMBenchmark.jl" begin
     @testset "Benchmarks" begin
         @test STREAMBenchmark.default_vector_length() >= STREAMBenchmark.last_cachesize() / sizeof(Float64)
 
-        use_less_memory && (STREAMBenchmark.default_vector_length() = 10)
+        iszero(VECTOR_LENGTH) || (STREAMBenchmark.default_vector_length() = VECTOR_LENGTH)
         @show STREAMBenchmark.default_vector_length()
 
         # memory_bandwidth
