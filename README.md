@@ -76,7 +76,7 @@ julia> benchmark()
 To assess the scaling of the maximal memory bandwidth with the number of threads, we provide the function `scaling_benchmark()`
 
 ```julia
-julia> scaling_benchmark()
+julia> y = scaling_benchmark()
 # Threads: 1	Max. memory bandwidth: 19058.7
 # Threads: 2	Max. memory bandwidth: 37511.2
 # Threads: 3	Max. memory bandwidth: 55204.6
@@ -98,6 +98,31 @@ julia> scaling_benchmark()
   93701.0
   97093.6
  101293.9
+ 
+julia> using UnicodePlots
+
+julia> lineplot(1:length(y), y, title = "Bandwidth Scaling", xlabel = "# cores", ylabel = "MB/s", border = :ascii, canvas = AsciiCanvas)
+
+                            Bandwidth Scaling
+               +----------------------------------------+
+        110000 |                                        |
+               |                                   __r-*|
+               |                            __--"""     |
+               |                      __-*""            |
+               |                 ._-*"                  |
+               |              .r*"                      |
+               |           .r"`                         |
+   MB/s        |         .*'                            |
+               |       ./`                              |
+               |      .'                                |
+               |    ./                                  |
+               |  .r`                                   |
+               | ./                                     |
+               |*`                                      |
+         10000 |                                        |
+               +----------------------------------------+
+                1                                     10
+                                 # cores
  ```
 
 ### Vector length
