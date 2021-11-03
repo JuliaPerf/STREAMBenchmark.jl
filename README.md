@@ -220,3 +220,8 @@ See https://discourse.julialang.org/t/thread-affinitization-pinning-julia-thread
 
 * Original STREAM benchmark (C/Fortran): https://www.cs.virginia.edu/stream/
 * Blog post about how to optimize and interpret the benchmark: https://blogs.fau.de/hager/archives/8263
+
+
+## Acknowledgements
+
+* CI infrastructure is provided by the [Paderborn Center for Parallel Computing (PC²)](https://pc2.uni-paderborn.de/)
