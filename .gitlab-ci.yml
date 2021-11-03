@@ -7,7 +7,7 @@ julia/1.6:
   tags:
     - bauerc-noctua
   variables:
-    SCHEDULER_PARAMETERS: "-A pc2-mitarbeiter -p short -t 00:15:00"
+    SCHEDULER_PARAMETERS: "-A pc2-mitarbeiter -p short -t 00:10:00"
   only:
     - main
     - pushes
@@ -24,7 +24,7 @@ julia/1.7.0-rc2:
   tags:
     - bauerc-noctua
   variables:
-    SCHEDULER_PARAMETERS: "-A pc2-mitarbeiter -p short -t 00:15:00"
+    SCHEDULER_PARAMETERS: "-A pc2-mitarbeiter -p short -t 00:10:00"
   only:
     - main
     - pushes
@@ -53,7 +53,7 @@ julia/1.6-coverage:
     - external_pull_requests
   script:
     - export JULIA_NUM_THREADS=10
-    - export STREAM_VECTOR_LENGTH=10
+    - export STREAM_VECTOR_LENGTH=10000
     - /bin/bash -l
     - module load lang/Julia/1.6.2-linux-x86_64
     - julia --color=yes --project=. -e 'using Pkg; Pkg.build(verbose=true); Pkg.test(; coverage = true);'
