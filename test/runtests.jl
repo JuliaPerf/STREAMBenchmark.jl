@@ -35,7 +35,7 @@ end
         @test 10 < memory_bandwidth().median < 1_000_000
         @test 10 < memory_bandwidth(nthreads=1).median < 1_000_000
         with_avxt() do
-            @test 100 < memory_bandwidth().median < 1_000_000
+            @test 10 < memory_bandwidth().median < 1_000_000
         end
         @test !isnothing(memory_bandwidth(nthreads=max(Threads.nthreads()-1,1)))
 
