@@ -32,8 +32,8 @@ end
 
         # memory_bandwidth
         @test keys(memory_bandwidth()) == (:median, :minimum, :maximum)
-        @test 100 < memory_bandwidth().median < 1_000_000
-        @test 100 < memory_bandwidth(nthreads=1).median < 1_000_000
+        @test 10 < memory_bandwidth().median < 1_000_000
+        @test 10 < memory_bandwidth(nthreads=1).median < 1_000_000
         with_avxt() do
             @test 100 < memory_bandwidth().median < 1_000_000
         end
@@ -42,7 +42,7 @@ end
         # TODO: add verbose=true test
         membw = memory_bandwidth().median
         membw_nowrtalloc = memory_bandwidth(write_allocate=false).median
-        @test (membw > membw_nowrtalloc) || (abs(membw - membw_nowrtalloc) < 0.1 * membw)
+        @test (membw > membw_nowrtalloc) || (abs(membw - membw_nowrtalloc) < 0.3 * membw)
 
         # benchmark
         let nt = benchmark()
