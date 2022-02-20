@@ -5,7 +5,7 @@ macro threaded(code)
         if $(@__MODULE__).avxt()
             @avxt($code)
         else
-            @threads($code)
+            @threads(:static, $code)
         end
     ))
 end
