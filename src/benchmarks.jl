@@ -27,9 +27,6 @@ function _run_kernels(
     write_allocate=true,
     nthreads=Threads.nthreads()
 )
-    # initialize
-    A, B, C, D, s = zeros(N), zeros(N), zeros(N), zeros(N), rand()
-
     α = write_allocate ? 24 : 16
     β = write_allocate ? 32 : 24
 
@@ -38,6 +35,23 @@ function _run_kernels(
 
     # N / nthreads if necessary
     thread_indices = _threadidcs(N, nthreads)
+
+    # initialize memory
+    A = Vector{Float64}(undef, N)
+    B = Vector{Float64}(undef, N)
+    C = Vector{Float64}(undef, N)
+    D = Vector{Float64}(undef, N)
+    s = rand()
+
+    # fill in parallel (important for NUMA mapping / first-touch policy)
+    @threads :static for tid in 1:nthreads
+        @inbounds for i in thread_indices[tid]
+            A[i] = 0.0
+            B[i] = 0.0
+            C[i] = 0.0
+            D[i] = 0.0
+        end
+    end
 
     # COPY
     t_copy = @belapsed $copy($C, $A; nthreads=$nthreads, thread_indices=$thread_indices) samples = 10 evals = evals_per_sample
@@ -92,22 +106,23 @@ function benchmark(; kwargs...)
 end
 
 """
-    scaling_benchmark(; kwargs...)
+    scaling_benchmark(; threads=1:Threads.nthreads(), kwargs...)
 
-Runs a comprehensive STREAM benchmark for a varying number of threads (`1:Threads.nthreads()`).
+Runs a comprehensive STREAM benchmark for a varying number of threads (as indicated by `threads`).
 Returns a vector of the measured maximal memory_bandwidths (in MB/s) for each number of threads.
 """
-function scaling_benchmark(; verbose=false, kwargs...)
+function scaling_benchmark(; verbose=false, threads=1:Threads.nthreads(), kwargs...)
     if avxt()
         @warn("Won't use @avxt as it isn't compatible with specifying a particular number of threads")
     end
-    maximums = zeros(Threads.nthreads())
-    for nthreads in 1:Threads.nthreads()
+    maximums = zeros(length(threads))
+    for nthreads in threads
         res = _run_kernels(
             copy_nthreads, scale_nthreads, add_nthreads, triad_nthreads; nthreads, verbose, kwargs...
         )
         maximums[nthreads] = res.maximum
         println("# Threads: ", nthreads, "\t", "Max. memory bandwidth: ", res.maximum)
+        flush(stdout)
     end
     return maximums
 end
@@ -139,7 +154,7 @@ function memory_bandwidth(; verbose=false, nthreads=Threads.nthreads(), kwargs..
         a = add_nthreads
         t = triad_nthreads
     end
-    
+
     if verbose
         nthreads > 1 ? println("╔══╡ Multi-threaded:") : println("╔══╡ Single-threaded:")
         println("╠══╡ ($(_nthreads_string(nthreads)) threads)")
@@ -155,7 +170,7 @@ end
 
 function last_cachesize()
     Base.Cartesian.@nexprs 4 i -> begin
-        cs = Int(LoopVectorization.VectorizationBase.cache_size(Val(5-i)))
+        cs = Int(LoopVectorization.VectorizationBase.cache_size(Val(5 - i)))
         cs == 0 || return cs
     end
     0
