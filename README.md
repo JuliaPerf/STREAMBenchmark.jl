@@ -7,7 +7,7 @@
 
 *Getting a realistic **estimate** of the achievable (maximal) **memory bandwidth***
 
-**Note:** This package implements a simple variant of the [original STREAM benchmark](https://www.cs.virginia.edu/stream/). There also is [BandwidthBenchmark.jl](https://github.com/JuliaPerf/BandwidthBenchmark.jl), which is a variant of [TheBandwidthBenchmark](https://github.com/RRZE-HPC/TheBandwidthBenchmark) (an "extended STREAM benchmark").
+**Note:** This package implements a simple variant of the [original STREAM benchmark](https://www.cs.virginia.edu/stream/). There also is [BandwidthBenchmark.jl](https://github.com/JuliaPerf/BandwidthBenchmark.jl), which is a variant of [TheBandwidthBenchmark](https://github.com/RRZE-HPC/TheBandwidthBenchmark).
 
 ## `memory_bandwidth()`
 
@@ -27,14 +27,14 @@ julia> using STREAMBenchmark
 julia> memory_bandwidth(verbose=true)
 ╔══╡ Multi-threaded:
 ╠══╡ (10 threads)
-╟─ COPY:  101153.8 MB/s
-╟─ SCALE: 100908.0 MB/s
-╟─ ADD:   100516.0 MB/s
-╟─ TRIAD: 100549.5 MB/s
+╟─ COPY:  100205.2 MB/s
+╟─ SCALE: 100218.7 MB/s
+╟─ ADD:   100364.7 MB/s
+╟─ TRIAD: 100293.1 MB/s
 ╟─────────────────────
-║ Median: 100728.8 MB/s
+║ Median: 100255.9 MB/s
 ╚═════════════════════
-(median = 100728.8, minimum = 100516.0, maximum = 101153.8)
+(median = 100255.9, minimum = 100205.2, maximum = 100364.7)
 ```
 
 ### Keyword arguments
@@ -49,25 +49,25 @@ If you want to run both the single- and multi-threaded benchmark at once you can
 ```julia
 julia> benchmark()
 ╔══╡ Single-threaded:
-╟─ COPY:  19088.6 MB/s
-╟─ SCALE: 18699.8 MB/s
-╟─ ADD:   17518.3 MB/s
-╟─ TRIAD: 17501.3 MB/s
+╟─ COPY:  18880.8 MB/s
+╟─ SCALE: 18537.2 MB/s
+╟─ ADD:   17380.2 MB/s
+╟─ TRIAD: 17359.9 MB/s
 ╟─────────────────────
-║ Median: 18109.0 MB/s
+║ Median: 17958.7 MB/s
 ╚═════════════════════
 
 ╔══╡ Multi-threaded:
 ╠══╡ (10 threads)
-╟─ COPY:  101497.9 MB/s
-╟─ SCALE: 101381.9 MB/s
-╟─ ADD:   100281.5 MB/s
-╟─ TRIAD: 100828.4 MB/s
+╟─ COPY:  100358.1 MB/s
+╟─ SCALE: 100218.2 MB/s
+╟─ ADD:   99508.0 MB/s
+╟─ TRIAD: 99582.4 MB/s
 ╟─────────────────────
-║ Median: 101105.2 MB/s
+║ Median: 99900.3 MB/s
 ╚═════════════════════
 
-(single = (median = 18109.0, minimum = 17501.3, maximum = 19088.6), multi = (median = 101105.2, minimum = 100281.5, maximum = 101497.9))
+(single = (median = 17958.7, minimum = 17359.9, maximum = 18880.8), multi = (median = 99900.3, minimum = 99508.0, maximum = 100358.1))
 ```
 
 ## Scaling
