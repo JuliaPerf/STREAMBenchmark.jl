@@ -1,0 +1,7 @@
+[deps]
+STREAMBenchmark = "05e9033e-e298-417a-adae-495536c11ad4"
+ThreadPinning = "811555cd-349b-4f26-b7bc-1f208b848042"
+UnicodePlots = "b8865327-cd53-5732-bb35-84acbb429228"
+
+[extras]
+CPUSummary = "2a0fbf3d-bb9c-48f3-b0a9-814d99fd7ab9"
