@@ -1,3 +1,4 @@
+<img src="https://github.com/JuliaPerf/STREAMBenchmark.jl/raw/master/logo/stream_logo_notxt.svg" width="140"></img>
 # STREAMBenchmark
 
 <!-- [![Build Status](https://github.com/JuliaPerf/STREAMBenchmark.jl/workflows/CI/badge.svg)](https://github.com/JuliaPerf/STREAMBenchmark.jl/actions) -->
