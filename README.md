@@ -1,3 +1,4 @@
+<img src="https://github.com/JuliaPerf/STREAMBenchmark.jl/raw/master/logo/stream_logo_notxt.svg" width="140"></img>
 # STREAMBenchmark
 
 <!-- [![Build Status](https://github.com/JuliaPerf/STREAMBenchmark.jl/workflows/CI/badge.svg)](https://github.com/JuliaPerf/STREAMBenchmark.jl/actions) -->
@@ -39,6 +40,7 @@ julia> memory_bandwidth(verbose=true)
 ```
 
 ### Keyword arguments
+* `N` (default `STREAMBenchmark.default_vector_length()`): length of the vectors used in the streaming kernels
 * `nthreads` (default `Threads.nthreads()`): Use `nthreads` threads for the benchmark. It must hold `1 ≤ nthreads ≤ Threads.nthreads()`.
 * `write_allocate` (default: `true`): assume the use / count write allocates.
 * `verbose` (default: `false`): verbose output, including the individual results of the streaming kernels.
