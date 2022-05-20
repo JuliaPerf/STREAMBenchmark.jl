@@ -116,7 +116,7 @@ end
     @testset "Original C STREAM Benchmark" begin
         mktempdir() do tmpdir
             cd(tmpdir) do
-                STREAMBenchmark.download_original_STREAM()
+                STREAMBenchmark.download_original_STREAM(; debug=true)
                 @test isdir("stream")
                 isdir("stream") && cd("stream") do
                     @test isfile("stream.c")
