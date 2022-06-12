@@ -1,3 +1,4 @@
+<img src="https://github.com/JuliaPerf/STREAMBenchmark.jl/raw/master/logo/stream_logo_notxt.svg" width="140"></img>
 # STREAMBenchmark
 
 <!-- [![Build Status](https://github.com/JuliaPerf/STREAMBenchmark.jl/workflows/CI/badge.svg)](https://github.com/JuliaPerf/STREAMBenchmark.jl/actions) -->
@@ -13,9 +14,10 @@
 
 The function `memory_bandwidth()` estimates the memory bandwidth in megabytes per second (MB/s). It returns a named tuple indicating the median, minimum, and maximum of the four measurements.
 
-**Note:** To obtain a reasonable estimate you should start julia with `N` threads, where `N` should match the number of cores (e.g. of a NUMA domain).
-
-**Linux note:** If possible, you should pin the Julia threads (for example to the cores of a NUMA domain) to decrease the variance of the benchmark. The simplest ways to pin `N` Julia threads to the first `N` cores (compact pinning) are 1) settings `JULIA_EXLUSIVE=1` or 2) using [ThreadPinning.jl's](https://github.com/carstenbauer/ThreadPinning.jl) `pinthreads(:compact)`.
+A few **important remarks** upfront:
+* To obtain a reasonable estimate you should start julia with enough threads (e.g. as many as you have physical cores).
+* You should play around with the length of the vectors, used in the streaming kernels, via the keyword argument `N`. Make it large enough (e.g. # of NUMA nodes times four times the size of the outermost cache size) in particular if you get unreasonably high bandwidths.
+* If possible, you should pin the Julia threads to separate cores. The simplest ways to pin `N` Julia threads to the first `N` cores (compact pinning) are 1) settings `JULIA_EXLUSIVE=1` or 2) using [ThreadPinning.jl's](https://github.com/carstenbauer/ThreadPinning.jl) `pinthreads(:compact)`. We will use the latter below.
 
 ```julia
 julia> using ThreadPinning
@@ -38,6 +40,7 @@ julia> memory_bandwidth(verbose=true)
 ```
 
 ### Keyword arguments
+* `N` (default `STREAMBenchmark.default_vector_length()`): length of the vectors used in the streaming kernels
 * `nthreads` (default `Threads.nthreads()`): Use `nthreads` threads for the benchmark. It must hold `1 ≤ nthreads ≤ Threads.nthreads()`.
 * `write_allocate` (default: `true`): assume the use / count write allocates.
 * `verbose` (default: `false`): verbose output, including the individual results of the streaming kernels.

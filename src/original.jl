@@ -1,15 +1,36 @@
+const ORIGINAL_SOURCES = [
+    "https://www.cs.virginia.edu/stream/FTP/Code/",
+    "https://raw.githubusercontent.com/jeffhammond/STREAM/master/",
+]
+
 """
 Download the C STREAM benchmark source code from https://www.cs.virginia.edu/stream into a new folder "stream".
 """
-function download_original_STREAM()
+function download_original_STREAM(; debug = false)
     println("- Creating folder \"stream\"")
-    mkdir("stream")
+    !isdir("stream") && mkdir("stream")
     println("- Downloading C STREAM benchmark")
-    Downloads.download("https://www.cs.virginia.edu/stream/FTP/Code/stream.c",
-                       "stream/stream.c")
-    Downloads.download("https://www.cs.virginia.edu/stream/FTP/Code/mysecond.c",
-                       "stream/mysecond.c")
-    println("- Done.")
+    done = false
+    for src in ORIGINAL_SOURCES
+        if !done
+            try
+                Downloads.download(joinpath(src, "stream.c"), "stream/stream.c")
+                Downloads.download(joinpath(src, "mysecond.c"), "stream/mysecond.c")
+                done = true
+            catch err
+                if debug
+                    @warn err
+                end
+            end
+        else
+            break
+        end
+    end
+    if done
+        println("- Done.")
+    else
+        println("- Couldn't download original STREAM :(")
+    end
     return nothing
 end
 

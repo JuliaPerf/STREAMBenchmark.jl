@@ -23,7 +23,7 @@ if !iszero(VECTOR_LENGTH)
 end
 
 @test STREAMBenchmark.default_vector_length() >=
-        STREAMBenchmark.last_cachesize() / sizeof(Float64)
+      STREAMBenchmark.last_cachesize() / sizeof(Float64)
 
 iszero(VECTOR_LENGTH) || (STREAMBenchmark.default_vector_length() = VECTOR_LENGTH)
 @show STREAMBenchmark.default_vector_length()

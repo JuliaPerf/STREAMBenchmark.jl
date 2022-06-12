@@ -11,7 +11,7 @@ mktempdir() do tmpdir
         end
 
         try
-            STREAMBenchmark.compile_original_STREAM()
+            STREAMBenchmark.compile_original_STREAM(; debug = true)
             @test isfile("stream/stream")
         catch e
             @warn "Compilation of original C STREAM benchmark failed."
