@@ -26,7 +26,7 @@ using UnicodePlots
 
 # thread affinity
 pinthreads(:compact)
-threadinfo(; color=false)
+threadinfo(; color = false)
 println()
 println("Julia threads are running on the following cores:")
 println(getcpuids(), "\n")
@@ -34,13 +34,14 @@ flush(stdout)
 
 # membw benchmark
 println()
-benchmark(N=64_000_000)
+benchmark(N = 64_000_000)
 flush(stdout)
 
 # membw scaling benchmark
 println()
-maximums = scaling_benchmark(N=64_000_000)
+maximums = scaling_benchmark(N = 64_000_000)
 flush(stdout)
-p = lineplot(1:Threads.nthreads(), maximums, title="Memory Bandwidth Scaling", xlabel="# threads", ylabel="MB/s", border=:ascii, canvas=AsciiCanvas)
+p = lineplot(1:Threads.nthreads(), maximums, title = "Memory Bandwidth Scaling",
+             xlabel = "# threads", ylabel = "MB/s", border = :ascii, canvas = AsciiCanvas)
 println(p)
 flush(stdout)

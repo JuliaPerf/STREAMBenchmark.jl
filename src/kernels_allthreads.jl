@@ -1,13 +1,11 @@
 avxt() = false
 
 macro threaded(code)
-    return esc(:(
-        if $(@__MODULE__).avxt()
-            @avxt($code)
-        else
-            @threads(:static, $code)
-        end
-    ))
+    return esc(:(if $(@__MODULE__).avxt()
+                     @avxt($code)
+                 else
+                     @threads(:static, $code)
+                 end))
 end
 
 # multithreaded kernels
