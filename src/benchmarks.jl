@@ -24,7 +24,8 @@ function _run_kernels(copy,
                       N = default_vector_length(),
                       evals_per_sample = 5,
                       write_allocate = true,
-                      nthreads = Threads.nthreads())
+                      nthreads = Threads.nthreads(),
+                      init = :parallel)
     α = write_allocate ? 24 : 16
     β = write_allocate ? 32 : 24
 
@@ -35,20 +36,28 @@ function _run_kernels(copy,
     thread_indices = _threadidcs(N, nthreads)
 
     # initialize memory
-    A = Vector{Float64}(undef, N)
-    B = Vector{Float64}(undef, N)
-    C = Vector{Float64}(undef, N)
-    D = Vector{Float64}(undef, N)
-    s = rand()
+    if init == :parallel
+        A = Vector{Float64}(undef, N)
+        B = Vector{Float64}(undef, N)
+        C = Vector{Float64}(undef, N)
+        D = Vector{Float64}(undef, N)
+        s = rand()
 
-    # fill in parallel (important for NUMA mapping / first-touch policy)
-    @threads :static for tid in 1:nthreads
-        @inbounds for i in thread_indices[tid]
-            A[i] = 0.0
-            B[i] = 0.0
-            C[i] = 0.0
-            D[i] = 0.0
+        # fill in parallel (important for NUMA mapping / first-touch policy)
+        @threads :static for tid in 1:nthreads
+            @inbounds for i in thread_indices[tid]
+                A[i] = 0.0
+                B[i] = 0.0
+                C[i] = 0.0
+                D[i] = 0.0
+            end
         end
+    else
+        A = zeros(N)
+        B = zeros(N)
+        C = zeros(N)
+        D = zeros(N)
+        s = rand()
     end
 
     # COPY
