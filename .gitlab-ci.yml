@@ -19,7 +19,7 @@ stages:
 #     - module load lang/Julia/1.6.2-linux-x86_64
 #     - julia --color=yes --project=. -e 'using Pkg; Pkg.build(verbose=true); Pkg.test();'
 
-julia/1.7.2:
+julia/1.8.3:
   stage: test
   tags:
     - bauerc-noctua
@@ -35,11 +35,11 @@ julia/1.7.2:
 #     job: julia/1.6
   script:
     - /bin/bash -l
-    - module load lang/Julia/1.7.2-linux-x86_64
+    - module load lang/JuliaHPC/1.8.3-foss-2022a-CUDA-11.7.0
     - julia --color=yes --project=. -e 'using Pkg; Pkg.build(verbose=true); Pkg.test();'
   
 # we don't really want to test the package here (it's fine if tests are failing)
-julia/1.7-coverage:
+julia/1.8-coverage:
   stage: coverage
   tags:
     - bauerc-noctua
@@ -54,7 +54,7 @@ julia/1.7-coverage:
     - external_pull_requests
   script:
     - /bin/bash -l
-    - module load lang/Julia/1.7.2-linux-x86_64
+    - module load lang/JuliaHPC/1.8.3-foss-2022a-CUDA-11.7.0
     - julia --color=yes --project=. -e 'using Pkg; Pkg.build(verbose=true); Pkg.test(; coverage = true);'
     - julia --color=yes --project=test/coverage -e 'import Pkg; Pkg.instantiate()'
     - julia --color=yes --project=test/coverage test/coverage/coverage.jl
