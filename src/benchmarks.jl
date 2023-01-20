@@ -6,17 +6,8 @@ default_vector_length() = Int(4 * last_cachesize() / sizeof(Float64))
 _nthreads_string(nthreads) = avxt() ? "@avxt" : string(nthreads)
 
 function _threadidcs(N, nthreads)
-    Nperthread = div(N, nthreads)
-    rest = rem(N, nthreads)
+    Nperthread, rest = divrem(N, nthreads)
     thread_indices = Vector{UnitRange{Int64}}(undef, nthreads)
-    #
-    # more balanced distribution of workload to each thread
-    #
-    # For example, 10 elements for 4 threads are distributed as:
-    # thread 1 has elements 1 to  3 (3 elements per thread)
-    # thread 2 has elements 4 to  6 (3 elements per thread)
-    # thread 3 has elements 7 to  8 (2 elements per thread)
-    # thread 4 has elements 9 to 10 (2 elements per thread)
     for i in 1:nthreads
       thread_indices[i] = i ≤ rest                                    ?
       (((i - 1) * (Nperthread + 1) +    1):(i * (Nperthread +    1))) :
