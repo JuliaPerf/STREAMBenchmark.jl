@@ -6,12 +6,12 @@ default_vector_length() = Int(4 * last_cachesize() / sizeof(Float64))
 _nthreads_string(nthreads) = avxt() ? "@avxt" : string(nthreads)
 
 function _threadidcs(N, nthreads)
-    Nperthread = floor(Int, N / nthreads)
-    rest = rem(N, nthreads)
-    thread_indices = collect(Iterators.partition(1:N, Nperthread))
-    if rest != 0
-        # last thread compensates for the nonzero remainder
-        thread_indices[end - 1] = (thread_indices[end - 1].start):(thread_indices[end].stop)
+    Nperthread, rest = divrem(N, nthreads)
+    thread_indices = Vector{UnitRange{Int64}}(undef, nthreads)
+    for i in 1:nthreads
+      thread_indices[i] = i ≤ rest                                    ?
+      (((i - 1) * (Nperthread + 1) +    1):(i * (Nperthread +    1))) :
+      (((i - 1) *  Nperthread + 1  + rest):(i *  Nperthread + rest ))
     end
     return thread_indices
 end
