@@ -184,7 +184,7 @@ end
 function last_cachesize()
     Base.Cartesian.@nexprs 4 i->begin
         cs = Int(LoopVectorization.VectorizationBase.cache_size(Val(5 - i)))
-        cs == 0 || return cs
+        cs == 0 || return cs*LoopVectorization.num_cores()
     end
     return 0
 end
