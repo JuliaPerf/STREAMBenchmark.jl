@@ -19,7 +19,7 @@ A few **important remarks** upfront:
 * You should play around with the length of the vectors, used in the streaming kernels, via the keyword argument `N`. Make it large enough (e.g. # of NUMA nodes times four times the size of the outermost cache size) in particular if you get unreasonably high bandwidths.
 * If possible, you should pin the Julia threads to separate cores. The simplest ways to pin `N` Julia threads to the first `N` cores (compact pinning) are 1) settings `JULIA_EXLUSIVE=1` or 2) using [ThreadPinning.jl's](https://github.com/carstenbauer/ThreadPinning.jl) `pinthreads(:compact)`. We will use the latter below.
 
-```julia
+```julia-repl
 julia> using ThreadPinning
 
 julia> pinthreads(:compact)
@@ -49,7 +49,7 @@ julia> memory_bandwidth(verbose=true)
 
 If you want to run both the single- and multi-threaded benchmark at once you can call `benchmark()` which produces an output like this:
 
-```julia
+```julia-repl
 julia> benchmark()
 ╔══╡ Single-threaded:
 ╟─ COPY:  18880.8 MB/s
@@ -79,7 +79,7 @@ julia> benchmark()
 
 To assess the scaling of the maximal memory bandwidth with the number of threads, we provide the function `scaling_benchmark()`
 
-```julia
+```julia-repl
 julia> y = scaling_benchmark()
 # Threads: 1	Max. memory bandwidth: 19058.7
 # Threads: 2	Max. memory bandwidth: 37511.2
@@ -133,7 +133,7 @@ julia> lineplot(1:length(y), y, title = "Bandwidth Scaling", xlabel = "# cores",
 
 By default a vector length of four times the size of the outermost cache is used (a rule of thumb ["laid down by Dr. Bandwidth"](https://blogs.fau.de/hager/archives/8263)). To measure the memory bandwidth for a few other factorsas well you might want to use `STREAMBenchmark.vector_length_dependence()`:
 
-```julia
+```julia-repl
 julia> STREAMBenchmark.vector_length_dependence()
 1: 3604480 => 121692.2
 2: 7208960 => 99755.5
@@ -150,7 +150,7 @@ Dict{Int64, Float64} with 4 entries:
 
 We can download and compile the [C source code](https://www.cs.virginia.edu/stream/FTP/Code/) of the original STREAM benchmark via STREAMBenchmark.jl:
 
-```julia
+```julia-repl
 julia> using STREAMBenchmark
 
 julia> STREAMBenchmark.download_original_STREAM()
